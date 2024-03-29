@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap");
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+body {
+  background-color: #000;
+}
+#guide {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+}
+.row {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+.cell {
+  flex-grow: 0;
+  /* do not grow   - initial value: 0 */
+  flex-shrink: 0;
+  /* do not shrink - initial value: 1 */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #1e1e1e;
+  margin: 1px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.cell:hover {
+  background-color: #565656;
+  color: #ffffff;
+}
+.cell > span {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  padding: 0 16px;
+  height: 24px;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.channel-cell {
+  flex-grow: 0;
+  /* do not grow   - initial value: 0 */
+  flex-shrink: 0;
+  /* do not shrink - initial value: 1 */
+  background-color: #1e1e1e;
+  margin: 1px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.time-cell {
+  flex-grow: 0;
+  /* do not grow   - initial value: 0 */
+  flex-shrink: 0;
+  /* do not shrink - initial value: 1 */
+  background-color: #1e1e1e;
+  margin: 1px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 250px;
+  height: 50px;
+}
+.time-cell > span {
+  font-family: "Open Sans", sans-serif;
+  color: #fff;
+  font-weight: 300;
+  font-size: 20px;
+  padding: 0 16px;
+  height: 24px;
+}
+#ch_number {
+  font-family: "Open Sans", sans-serif;
+  color: #878b91;
+  font-weight: 500;
+  font-size: 20px;
+  padding: 0 16px;
+  height: 24px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+  position: relative;
+  left: -20px;
+}
+.ch_logo {
+  display: flex;
+  cursor: pointer;
+}
+.material-symbols-outlined {
+  color: white;
+  position: relative;
+  left: -45px;
+  transition: all 0.25s ease;
+}
+.channel {
+  width: 200px;
+  background: linear-gradient(90deg, #090909 0%, #262626 35.87%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.ch_number {
+  display: flex;
+  align-items: center;
+  transition: all 0.1s ease;
+}
+.ch_number:hover .material-symbols-outlined {
+  position: relative;
+  left: 26px;
+  cursor: pointer;
+}
+.ch_number:hover #ch_number {
+  opacity: 0;
+}
+.channel-top {
+  width: 200px;
+  height: 50px;
+  background: linear-gradient(90deg, #090909 0%, #262626 35.87%);
+}
+.time-15 {
+  width: 124px;
+  height: 70px;
+}
+.time-30 {
+  width: 250px;
+  height: 70px;
+}
+.time-60 {
+  width: 502px;
+  height: 70px;
+}
+.time-120 {
+  width: 1004px;
+  height: 70px;
+}
+.on-now {
+  color: #ffffff;
+  background-color: #343434;
+}
+.on-next {
+  color: #b0b0b0;
+  background-color: #1e1e1e;
+}
+#on-now {
+  background-color: #458b00;
+  padding: 13px 80px 13px 16px;
+  border-right: 2px solid #60bf02;
+}
+.arrow-down {
+  position: relative;
+  left: -9px;
+  top: -20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #60bf02;
+}
