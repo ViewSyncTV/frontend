@@ -1,15 +1,16 @@
-import { useState } from 'react'
-import './App.css'
-import Grid from './components/Grid'
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Grid from "./components/Grid";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <Grid />
+      <Navbar />
+      <div className="grid_wrapper">
+        <Grid />
+      </div>
     </>
-  )
+  );
 }
 
 export default App;
