@@ -1,3 +1,6 @@
+import LoginButton from "./LoginButton";
+import LogoutButton from "./LogoutButton";
+
 function Navbar() {
   return (
     <div className="navbar bg-base-100">
@@ -31,6 +34,12 @@ function Navbar() {
             </li>
             <li>
               <a>About</a>
+            </li>
+            <li>
+              <LogoutButton />
+            </li>
+            <li>
+              <LoginButton />
             </li>
           </ul>
         </div>
