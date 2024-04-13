@@ -2,8 +2,8 @@ import React from "react";
 
 const LogoutButton = () => {
   const logout = async () => {
-    const domain = "dev-axq8uw2w5u4wzzfs.us.auth0.com";
-    const clientId = "3huaI1RBJu9He7oNlwdazPjz6lW7mric";
+    const domain = import.meta.env.VITE_AUTH0_DOMAIN || "";
+    const clientId = import.meta.env.VITE_AUTH0_CLIENTID || "";
     const returnTo = "http://localhost:3000";
 
     const response = await fetch(

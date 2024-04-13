@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import queryString from "node:querystring";
 
-const PROCESS_CENTRIC_SERVICE_URL = process.env.PROCESS_CENTRIC_SERVICE_URL || "localhost:3010";
+const PROCESS_CENTRIC_SERVICE_URL = import.meta.env.VITE_PROCESS_CENTRIC_SERVICE_URL || "localhost:3010";
 
 const Callback = ({ location }) => {
   const { code } = queryString.parse(location.search);

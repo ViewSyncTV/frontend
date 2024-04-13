@@ -2,14 +2,16 @@ import React from "react";
 
 const LoginButton = () => {
   const login = async () => {
-    const domain = "dev-axq8uw2w5u4wzzfs.us.auth0.com";
-    const clientId = "3huaI1RBJu9He7oNlwdazPjz6lW7mric";
-    const audience = "https://viewsynctv.com/api";
-    const scope = "write:comments";
-    const responseType = "code";
-    const redirectUri = "http://localhost:3000/callback";
+    const domain = import.meta.env.VITE_AUTH0_DOMAIN || "";
+    const clientId = import.meta.env.VITE_AUTH0_CLIENTID || "";
+    const audience = import.meta.env.VITE_AUTH0_AUDIENCE || "";
+    const scope = import.meta.env.VITE_AUTH0_SCOPE || "";
+    const responseType = import.meta.env.VITE_AUTH0_RESPONSE_TYPE || "";
+    const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI || "";
 
-    window.location.replace(`https://${domain}/authorize?audience=${audience}&scope=${scope}&response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUri}`);
+    window.location.replace(
+      `https://${domain}/authorize?audience=${audience}&scope=${scope}&response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUri}`,
+    );
   };
 
   return (
