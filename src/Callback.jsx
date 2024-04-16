@@ -11,6 +11,7 @@ function Callback() {
   useEffect(() => {
     fetch(`${PROCESS_CENTRIC_SERVICE_URL}/api/auth?code=${code}`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Accept: "aplication/json",
