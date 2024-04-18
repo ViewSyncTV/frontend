@@ -1,0 +1,6 @@
+const VITE_DEVELOPMENT_MODE=true
+const VITE_DEVELOPMENT_URL='https://localhost:3000'
+const VITE_PRODUCTION_URL=''
+/*const VITE_PRODUCTION_URL='https://tv.duckdns.org:3000' */
+
+export { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL };
