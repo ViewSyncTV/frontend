@@ -46,7 +46,7 @@ function CustomSidebar(props) {
       }
     >
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">{props.children}</div>
+      <div className="drawer-content flex flex-col overflow-y-scroll">{props.children}</div>
       <div className="drawer-side z-20">
         <label
           htmlFor="my-drawer-2"
@@ -64,7 +64,7 @@ function CustomSidebar(props) {
             {props.theme === "dim" ? (
               <img
                 src={ViewSyncTVLogo}
-                className="w-60 h-24"
+                className="w-60 h-24 invert"
                 width="50rem"
                 height="50rem"
                 alt="ViewSyncTV logo, in dark mode"

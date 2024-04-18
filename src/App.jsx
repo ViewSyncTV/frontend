@@ -1,11 +1,14 @@
 import { useState, lazy, useEffect } from "react";
 import { fetch_my_assets } from "./api/fetch_my_assets";
 import { useAuth, hasAuthParams } from "react-oidc-context";
+import RaiPage from "./pages/RaiPage";
+import MediasetPage from "./pages/MediasetPage";
 
 
 import "./App.css";
 import AssetType from "./types/AssetType";
 import usePersistantState from "./components/usePersistantState";
+import Grid from "./components/Grid";
 const Layout = lazy(() => import("./containers/Layout"));
 
 function App() {
@@ -13,7 +16,57 @@ function App() {
   const [hasTriedSignin, setHasTriedSignin] = useState(false); // Boilerplate from react-oidc-context github repo
   const [idToken, setidToken] = useState("");
   const [reloadCounter, setReloadCounter] = useState(0); // Used to force reload of apis when needed
-  const [assets, setAssets] = useState([]);
+  const [assets, setAssets] = useState([
+    {
+      "asset": "Mediaset",
+      "category": "Palinsesto",
+      "orderidx": 1,
+      "link": "mediaset",
+      "description": "",
+    },
+    {
+      "asset": "Rai",
+      "category": "Palinsesto",
+      "orderidx": 2,
+      "link": "rai",
+      "description": "",
+    },
+    {
+      "asset": "Sky",
+      "category": "Palinsesto",
+      "orderidx": 3,
+      "link": "sky",
+      "description": "",
+    },
+    {
+      "asset": "All",
+      "category": "Palinsesto",
+      "orderidx": 4,
+      "link": "all_channels",
+      "description": "",
+    },
+    {
+      "asset": "Favorites",
+      "category": "For You",
+      "orderidx": 5,
+      "link": "favorites",
+      "description": "",
+    },
+    {
+      "asset": "Recommended",
+      "category": "For You",
+      "orderidx": 6,
+      "link": "recommended",
+      "description": "",
+    },
+    {
+      "asset": "Reminders",
+      "category": "For You",
+      "orderidx": 7,
+      "link": "popular",
+      "description": "",
+    },
+  ]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [defaultTab, setDefaultTab] = usePersistantState(
@@ -62,8 +115,8 @@ function App() {
           idToken={idToken}
           className=""
         >
-          <div className="card block bg-base-100 shadow-lg h-full">
-            <div className="card-body relative h-full overflow-hidden">
+          <div className="card block bg-base-100 shadow-lg overflow-y-scroll">
+            <div className="card-body relative">
               <div
                 className={
                   "tabcontent " + (activeTab === "mainpage" ? "active" : "")
@@ -92,15 +145,16 @@ function App() {
               </div>
               <div
                 className={
-                  "tabcontent " + (activeTab === "viewsynctv" ? "active" : "")
+                  "tabcontent " + (activeTab === "rai" ? "active" : "")
                 }
-                id="viewsynctv"
+                id="rai"
                 style={
                   activeTab === "viewsynctv"
                     ? { display: "block" }
                     : { display: "none" }
                 }
               >
+                <RaiPage />
               </div>
               <div
                 className={
@@ -113,7 +167,7 @@ function App() {
                     : { display: "none" }
                 }
               >
-                
+                <MediasetPage />
               </div>
               
             </div>
