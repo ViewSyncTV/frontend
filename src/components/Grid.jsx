@@ -1,7 +1,21 @@
 import { FaRegHeart } from "react-icons/fa";
 import './Grid.css';
 import { useEffect, useState } from "react";
-
+import Rete4 from "../mediaset-logo/Rete4.svg";
+import Canale5 from "../mediaset-logo/Canale5.svg";
+import Italia1 from "../mediaset-logo/Italia1.svg";
+import Italia2 from "../mediaset-logo/Italia2.svg";
+import twentyseven from "../mediaset-logo/27.svg";
+import Boing from "../mediaset-logo/Boing.svg";
+import Cartoonito from "../mediaset-logo/Cartoonito.svg";
+import Cine34 from "../mediaset-logo/Cine34.svg";
+import Focus from "../mediaset-logo/Focus.svg";
+import Iris from "../mediaset-logo/Iris.svg";
+import La5 from "../mediaset-logo/La5.svg";
+import MediasetExtra from "../mediaset-logo/Mediaset_Extra.svg";
+import Mediaset20 from "../mediaset-logo/Mediaset20.svg";
+import TGcom24 from "../mediaset-logo/TGcom24.svg";
+import TopCrime from "../mediaset-logo/Top_Crime.svg";
 
 function getCustomStyle(duration) {
   let width = (duration * 1004) / 120;
@@ -114,8 +128,7 @@ function Grid() {
       <div className="row timeline">
         <div className="time-cell channel-top"></div>
         <div className="time-cell">
-          <span id="on-now">On now</span>
-          <div className="arrow-down"></div>
+          <span id="">On now</span>
         </div>
         {intervals.map((interval, index) => (
           <div key={index} className="time-cell">
@@ -127,13 +140,13 @@ function Grid() {
         {channelsWithShows.map((channel, index) => (
           <div className="row">
             <div key={index} className="channel-cell channel">
-              <div className="ch_number" onClick={handleChannelClick}>
-                <span><FaRegHeart /></span>
+              <div className="ch_number">
+                
                 <span id="ch_number">{channel.channel_id}</span>
               </div>
               <a href="#" className="ch_logo">
                 <img
-                  src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s71733_ld_h15_aa.png?w=80"
+                  src={Canale5}
                   width="76px"
                 />
               </a>
@@ -148,16 +161,16 @@ function Grid() {
 
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
-            <span id="ch_number">100</span>
+          <div className="ch_number">
+            
+            <span id="ch_number">4</span>
           </div>
-          <a href="#" className="ch_logo">
-            <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s71733_ld_h15_aa.png?w=80"
-              width="76px"
+          
+          <img
+              src={Rete4}
+              alt= "Rete4"
+              width="60px"
             />
-          </a>
         </div>
 
         <div className="cell time-30 on-now">
@@ -184,15 +197,16 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
-            <span id="ch_number">101</span>
+          <div className="ch_number">
+            
+            <span id="ch_number">5</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://tl-images-stb-opus.cdn.avp.telus.net/v1/static/prod/live/b5bfe23a-1d07-4abb-9dfc-3ab6bdfdac0f.png?w=80"
-              width="76px"
+              src={Canale5}
+              alt="Canale5"
+              width="60px"
             />
           </a>
         </div>
@@ -220,15 +234,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
-            <span id="ch_number">102</span>
+          <div className="ch_number" >
+            <span id="ch_number">6</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://tl-images-stb-opus.cdn.avp.telus.net/v1/static/prod/live/369244a3-2578-43c4-9963-775df6df1f48.png?w=80"
-              width="76px"
+              src={Italia1}
+              alt= "Italia1"
+              width="60px"
             />
           </a>
         </div>
@@ -256,51 +270,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
-            <span id="ch_number">104</span>
-          </div>
-
-          <a href="#" className="ch_logo">
-            <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s63641_ld_h15_ab.png?w=80"
-              width="76px"
-            />
-          </a>
-        </div>
-        <div className="cell time-60 on-now">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-30 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-15 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-30 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-60 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-15 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-        <div className="cell time-30 on-next">
-          <span>Global News Hour at 6</span>
-        </div>
-      </div>
-      <div className="row">
-        <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
             <span id="ch_number">106</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s68327_ld_h15_aa.png?w=80"
-              width="76px"
+              src={Italia2}
+              alt= "Italia2"
+              width="60px"
             />
           </a>
         </div>
@@ -328,15 +306,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number" >
             <span id="ch_number">113</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s124895_ld_h9_aa.png?w=80"
-              width="76px"
+              src={twentyseven}
+              alt= "27"
+              width="60px"
             />
           </a>
         </div>
@@ -364,14 +342,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">119</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s72805_ld_h15_aa.png?w=80"
+              src={Boing}
+              alt= "Boing"
               width="76px"
             />
           </a>
@@ -400,14 +379,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">120</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s105304_ld_h15_aa.png?w=80"
+              src={Cartoonito}
+              alt= "Cartoonito"
               width="76px"
             />
           </a>
@@ -436,15 +416,16 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">123</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s27503_ld_h15_aa.png?w=80"
-              width="76px"
+              src={Cine34}
+              alt= "Cine34"
+              width="60px"
             />
           </a>
         </div>
@@ -472,14 +453,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">124</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s72855_ld_h15_ab.png?w=80"
+              src={Focus}
+              alt= "Focus"
               width="76px"
             />
           </a>
@@ -508,14 +490,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">125</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s61998_ld_h15_aa.png?w=80"
+              src={Iris}
+              alt= "Iris"
               width="76px"
             />
           </a>
@@ -544,14 +527,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">127</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s72183_ld_h15_aa.png?w=80"
+              src={La5}
+              alt= "La5"
               width="76px"
             />
           </a>
@@ -580,14 +564,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">128</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s72183_ld_h15_aa.png?w=80"
+              src={MediasetExtra}
+              alt= "MediasetExtra"
               width="76px"
             />
           </a>
@@ -616,15 +601,16 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">129</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://gn-images-stb-opus.cdn.avp.telus.net/assets/s90941_ld_h15_ab.png?w=80"
-              width="76px"
+              src={Mediaset20}
+              alt= "Mediaset20"
+              width="60px"
             />
           </a>
         </div>
@@ -638,14 +624,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">131</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://tl-images-stb-opus.cdn.avp.telus.net/v1/static/prod/live/3af64afe-3b4f-42ad-911a-c69e778defe2.png?w=80"
+              src={TGcom24}
+              alt= "TGcom24"
               width="76px"
             />
           </a>
@@ -660,14 +647,15 @@ function Grid() {
       </div>
       <div className="row">
         <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
+          <div className="ch_number">
+            
             <span id="ch_number">134</span>
           </div>
 
           <a href="#" className="ch_logo">
             <img
-              src="https://tl-images-stb-opus.cdn.avp.telus.net/v1/static/prod/live/f6b29930-3526-4416-9ac6-37efaed877d3.png?w=80"
+              src={TopCrime}
+              alt= "TopCrime"
               width="76px"
             />
           </a>
@@ -677,28 +665,6 @@ function Grid() {
         <div className="cell time-15 on-next"></div>
         <div className="cell time-15 on-next"></div>
         <div className="cell time-60 on-next"></div>
-        <div className="cell time-15 on-next"></div>
-        <div className="cell time-30 on-next"></div>
-      </div>
-      <div className="row">
-        <div className="channel-cell channel">
-          <div className="ch_number" onClick={handleChannelClick}>
-            <span><FaRegHeart /></span>
-            <span id="ch_number">135</span>
-          </div>
-
-          <a href="#" className="ch_logo">
-            <img
-              src="https://tl-images-stb-opus.cdn.avp.telus.net/v1/static/prod/live/18e4a4fa-bab5-4706-8f7c-5bdc71c8b2d6.png?w=80"
-              width="76px"
-            />
-          </a>
-        </div>
-        <div className="cell time-15 on-now"></div>
-        <div className="cell time-30 on-next"></div>
-        <div className="cell time-15 on-next"></div>
-        <div className="cell time-30 on-next"></div>
-        <div className="cell time-15 on-next"></div>
         <div className="cell time-15 on-next"></div>
         <div className="cell time-30 on-next"></div>
       </div>
