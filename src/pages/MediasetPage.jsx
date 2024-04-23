@@ -1,8 +1,9 @@
 import Grid from "../components/Grid";
 
+
 function MediasetPage() {
   return (
-    <Grid />
+    <Grid ch="mediaset"/>
   );
 }
 

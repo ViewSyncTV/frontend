@@ -27,15 +27,6 @@ function CustomNavbar(props) {
         </label>
       </div>
       <div className="flex-1 mr-4">
-        <div className="form-control w-full">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-full"
-            value={bouncingQuery}
-            onChange={(e) => setBouncingQuery(e.target.value)}
-          />
-        </div>
       </div>
       
       <ThemeWidget
@@ -43,7 +34,7 @@ function CustomNavbar(props) {
         setTheme={props.setTheme}
         className="flex-none"
       />
-      <CustomPhoto idToken={props.idToken} userName={props.userName} />
+      <CustomPhoto userName={props.userName} isAuth={props.isAuth} setIsAuth={props.setIsAuth} />
     </div>
   );
 }

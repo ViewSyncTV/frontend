@@ -15,14 +15,16 @@ function Layout(props) {
         defaultTab={props.defaultTab}
         loading={props.loading}
         isDevelopment={props.isDevelopment}
+        isAuth={props.isAuth}
       >
         <CustomNavbar
           searchQuery={props.searchQuery}
           setSearchQuery={props.setSearchQuery}
           theme={props.theme}
           setTheme={props.setTheme}
-          idToken={props.idToken}
           userName={props.userName}
+          isAuth={props.isAuth}
+          setIsAuth={props.setIsAuth}
         />
         <div className="px-4 pt-4 h-[90vh]">{props.children}</div>
         <div className="sticky bottom-0 mb-0 pb-0 w-full lg:hidden">

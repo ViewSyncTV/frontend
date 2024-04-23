@@ -84,6 +84,7 @@ function CustomSidebar(props) {
             // For each asset, we look for distinct categories and we print them as menu titles
             categories.map((category) => {
               if (category.trim() === "") return;
+              if (!props.isAuth && category === "For You") return;
               return (
                 <ul className="menu" key={category}>
                   <li>

@@ -1,5 +1,10 @@
+import Grid from "../components/Grid";
+
+
 function RaiPage() {
-    return <h1>Rai Page</h1>
+  return (
+    <Grid ch="rai"/>
+  );
 }
 
 export default RaiPage;

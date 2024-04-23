@@ -4,9 +4,8 @@ import { useSearchParams } from "react-router-dom";
 const PROCESS_CENTRIC_SERVICE_URL =
   import.meta.env.VITE_PROCESS_CENTRIC_SERVICE_URL || "localhost:3010";
 
-function Callback() {
-  const [searchParams] = useSearchParams();
-  const code = searchParams.get("code");
+function Callback(props) {
+  const code = window.location.href.split("code=")[1];
 
   useEffect(() => {
     fetch(`${PROCESS_CENTRIC_SERVICE_URL}/api/auth?code=${code}`, {
@@ -19,6 +18,8 @@ function Callback() {
     })
       .then((res) => res.json())
       .then(() => {
+        props.setIsAuth(true);
+        props.setAccessToken(code);
         window.location.replace("/");
       });
   }, [code]);
