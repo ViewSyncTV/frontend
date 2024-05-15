@@ -1,5 +1,5 @@
 import { FaRegHeart } from "react-icons/fa";
-import './Grid.css';
+import "./Grid.css";
 import { useEffect, useState } from "react";
 import Rete4 from "../loghi/mediaset-logo/Rete4.svg";
 import Canale5 from "../loghi/mediaset-logo/Canale5.svg";
@@ -29,34 +29,34 @@ import RaiGulp from "../loghi/rai-logo/RaiGulp.svg";
 import RaiNews24 from "../loghi/rai-logo/RaiNews24.svg";
 
 const ChannelMediasetLogoMap = {
-  "R4" : Rete4, // Rete4
-  "C5" : Canale5, // Canale5
-  "I1" : Italia1, // Italia1
-  "LB" : Mediaset20, // 20
-  "KI" : Iris, // Iris
-  "TS" : twentyseven, // 27
-  "KA" : La5, // La5
-  "B6" : Cine34, // Cine34
-  "FU" : Focus, // Focus
-  "LT" : TopCrime, // TopCrime
-  "I2" : Italia2, // Italia2
-  "KF" : TGcom24, // Tgcom24
-  "KQ" : MediasetExtra, // MediasetExtra
-  "KB" : Boing, // Boing
-  "LA" : Cartoonito, // Cartoonito
+  R4: Rete4, // Rete4
+  C5: Canale5, // Canale5
+  I1: Italia1, // Italia1
+  LB: Mediaset20, // 20
+  KI: Iris, // Iris
+  TS: twentyseven, // 27
+  KA: La5, // La5
+  B6: Cine34, // Cine34
+  FU: Focus, // Focus
+  LT: TopCrime, // TopCrime
+  I2: Italia2, // Italia2
+  KF: TGcom24, // Tgcom24
+  KQ: MediasetExtra, // MediasetExtra
+  KB: Boing, // Boing
+  LA: Cartoonito, // Cartoonito
 };
 
 const ChannelRaiLogoMap = {
-  "rai-1" : Rai1, // Rai 1
-  "rai-2" : Rai2, // Rai 2
-  "rai-3" : Rai3, // Rai 3
-  "rai-4" : Rai4, // Rai 4
-  "rai-5" : Rai5, // Rai 5
-  "rai-yoyo" : RaiYoyo, // Rai Yoyo
-  "rai-movie" : RaiMovie, // Rai Movie
-  "rai-premium" : RaiPremium, // Rai Premium
-  "rai-gulp" : RaiGulp, // Rai Gulp
-  "rai-news-24" : RaiNews24, // Rai News 24
+  "rai-1": Rai1, // Rai 1
+  "rai-2": Rai2, // Rai 2
+  "rai-3": Rai3, // Rai 3
+  "rai-4": Rai4, // Rai 4
+  "rai-5": Rai5, // Rai 5
+  "rai-yoyo": RaiYoyo, // Rai Yoyo
+  "rai-movie": RaiMovie, // Rai Movie
+  "rai-premium": RaiPremium, // Rai Premium
+  "rai-gulp": RaiGulp, // Rai Gulp
+  "rai-news-24": RaiNews24, // Rai News 24
 };
 
 function getCustomStyle(duration) {
@@ -64,13 +64,19 @@ function getCustomStyle(duration) {
   let height = 70;
   return {
     width: `${width}px`,
-    height: `${height}px`
-  }
+    height: `${height}px`,
+  };
 }
 
 function Grid(props) {
   const [intervals, setIntervals] = useState([]);
   const [channelsWithShows, setChannelsWithShows] = useState([]);
+  const [currentShow, setCurrentShow] = useState({
+    title: "",
+    start_time: new Date(),
+    end_time: new Date(),
+    description: "",
+  });
 
   useEffect(() => {
     /* ******************** POPULATE INTERVALS ******************** */
@@ -78,17 +84,16 @@ function Grid(props) {
     const currentHour = now.getHours(); // 0-23
     let intervals = [];
     for (let i = currentHour; i < currentHour + 24; i++) {
-      intervals.push(`${(i % 24) < 10 ? '0' + (i % 24) : (i % 24)}:00`);
-      intervals.push(`${(i % 24) < 10 ? '0' + (i % 24) : (i % 24)}:30`);
+      intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`);
+      intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`);
     }
     intervals.shift();
-    console.log("Intervals", intervals);
+    //console.log("Intervals", intervals);
     setIntervals(intervals);
     /* ******************** POPULATE CHANNELS ******************** */
-    fetch('http://localhost:3010/api/tv-program/today')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Channels", data);
+    fetch("http://localhost:3010/api/tv-program/today")
+      .then((response) => response.json())
+      .then((data) => {
         /*
           {
             "data": [
@@ -111,26 +116,34 @@ function Grid(props) {
         let channels = channel_ids.map((channel_id) => {
           return {
             channel_id: channel_id,
-            channel: data.data.find((item) => item.channel_id === channel_id).channel
-          }
+            channel: data.data.find((item) => item.channel_id === channel_id)
+              .channel,
+          };
         });
-        console.log("Channels", channels);
+        //console.log("Channels", channels);
         /* ******************** POPULATE SHOWS ******************** */
         // For each channel then get the shows in data and populate the shows
         // TODO: O usiamo una API che mi dia i canali e poi siamo sicuri che i programmi ci siano per tutti, o dobbiamo fare un check
         let shows = [];
         channels.forEach((channel) => {
-          let showsForChannel = data.data.filter((item) => item.channel_id === channel.channel_id);
+          let nowtime = new Date().getTime();
+          let showsForChannel = data.data.filter(
+            (item) =>
+              item.channel_id === channel.channel_id &&
+              new Date(item.end_time).getTime() > nowtime
+          );
           showsForChannel = showsForChannel.map((item) => {
             return {
               title: item.title,
               start_time: item.start_time,
               end_time: item.end_time,
-              description: item.description
-            }
+              description: item.description,
+            };
           });
           // Order shows by start_time
-          showsForChannel.sort((a, b) => { return new Date(a.start_time) - new Date(b.start_time); });
+          showsForChannel.sort((a, b) => {
+            return new Date(a.start_time) - new Date(b.start_time);
+          });
           // Set a duration in minutes for each show
           showsForChannel = showsForChannel.map((show, index) => {
             let start_time = new Date(show.start_time);
@@ -141,150 +154,184 @@ function Grid(props) {
               start_time: show.start_time,
               end_time: show.end_time,
               description: show.description,
-              duration: duration
-            }
+              duration: duration,
+            };
           });
           shows.push({
             channel_id: channel.channel_id,
-            shows: showsForChannel
+            shows: showsForChannel,
           });
         });
         setChannelsWithShows(shows);
-        console.log("Shows", shows);
+        //console.log("Shows", shows);
       });
   }, []);
 
   function handleChannelClick(e) {
     e.preventDefault();
-    console.log('Channel clicked');
-    if (e.target.getAttribute('data-click-state') == 1) {
-      e.target.setAttribute('data-click-state', 0);
-      e.target.style.fontVariationSettings = "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48";
+    //.log('Channel clicked');
+    if (e.target.getAttribute("data-click-state") == 1) {
+      e.target.setAttribute("data-click-state", 0);
+      e.target.style.fontVariationSettings =
+        "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48";
     } else {
-      e.target.setAttribute('data-click-state', 1);
-      e.target.style.fontVariationSettings = "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48";
+      e.target.setAttribute("data-click-state", 1);
+      e.target.style.fontVariationSettings =
+        "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48";
     }
   }
-  if (props.ch === "mediaset"){
-    let MediasetIDs = Object.keys(ChannelMediasetLogoMap)
-    let channelsMediaset = channelsWithShows.filter(channel => MediasetIDs.includes(channel.channel_id));
-    channelsMediaset.sort((a, b) => {
-      return Object.keys(ChannelMediasetLogoMap).indexOf(a.channel_id) - Object.keys(ChannelMediasetLogoMap).indexOf(b.channel_id);
-    });
 
+  // * Mediaset
+  let MediasetIDs = Object.keys(ChannelMediasetLogoMap);
+  let channelsMediaset = channelsWithShows.filter((channel) =>
+    MediasetIDs.includes(channel.channel_id)
+  );
+  channelsMediaset.sort((a, b) => {
     return (
-      <div id="guide">
-        <div className="row timeline">
-          <div className="time-cell channel-top"></div>
-          <div className="time-cell">
-            <span id="">On now</span>
-          </div>
-          {intervals.map((interval, index) => (
-            <div key={index} className="time-cell">
-              <span>{interval}</span>
-            </div>
-          ))}
-        </div>
-  
-          {channelsMediaset.map((channel, index) => (
-            <div className="row">
-              <div key={index} className="channel-cell channel">
-                <img
-                  src={ChannelMediasetLogoMap[channel.channel_id]}
-                  alt={channel.channel_id}
-                  width="60px"
-                />
-              </div>
-              {channel.shows.map((show, index) => (
-                <div key={index} className="cell" style={getCustomStyle(show.duration)}>
-                  <span>{show.title}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-      </div>
+      Object.keys(ChannelMediasetLogoMap).indexOf(a.channel_id) -
+      Object.keys(ChannelMediasetLogoMap).indexOf(b.channel_id)
     );
-  }else if (props.ch === "rai"){
-    
-    let RaiIDs = Object.keys(ChannelRaiLogoMap)
-    let channelsRai = channelsWithShows.filter(channel => RaiIDs.includes(channel.channel_id));
-    channelsRai.sort((a, b) => {
-      return Object.keys(ChannelRaiLogoMap).indexOf(a.channel_id) - Object.keys(ChannelRaiLogoMap).indexOf(b.channel_id);
-    });
+  });
+  // * Rai
+  let RaiIDs = Object.keys(ChannelRaiLogoMap);
+  let channelsRai = channelsWithShows.filter((channel) =>
+    RaiIDs.includes(channel.channel_id)
+  );
+  channelsRai.sort((a, b) => {
+    return (
+      Object.keys(ChannelRaiLogoMap).indexOf(a.channel_id) -
+      Object.keys(ChannelRaiLogoMap).indexOf(b.channel_id)
+    );
+  });
+  // * All
+  let sorting = [
+    "rai-1",
+    "rai-2",
+    "rai-3",
+    "R4",
+    "C5",
+    "I1",
+    "LB",
+    "KI",
+    "TS",
+    "KA",
+    "B6",
+    "FU",
+    "LT",
+    "I2",
+    "KF",
+    "KQ",
+    "rai-3",
+    "rai-4",
+    "rai-5",
+    "rai-movie",
+    "rai-premium",
+    "rai-news-24",
+    "KB",
+    "rai-gulp",
+    "rai-yoyo",
+    "LA",
+  ];
+  let allChannels = channelsWithShows;
+  channelsWithShows.sort((a, b) => {
+    return sorting.indexOf(a.channel_id) - sorting.indexOf(b.channel_id);
+  });
+  let channelsToShow;
+  if (props.ch === "mediaset") {
+    channelsToShow = channelsMediaset;
+  } else if (props.ch === "rai") {
+    channelsToShow = channelsRai;
+  } else {
+    channelsToShow = channelsWithShows;
+  }
 
-    return (
+  return (
+    <>
       <div id="guide">
         <div className="row timeline">
           <div className="time-cell channel-top"></div>
-          <div className="time-cell">
+          <div className="time-cell bg-red-600">
             <span id="">On now</span>
           </div>
           {intervals.map((interval, index) => (
-            <div key={index} className="time-cell">
+            <div key={index} className="time-cell bg-neutral">
               <span>{interval}</span>
             </div>
           ))}
         </div>
-  
-          {channelsRai.map((channel, index) => (
-            <div className="row">
-              <div key={index} className="channel-cell channel">
-                <img
-                  src={ChannelRaiLogoMap[channel.channel_id]}
-                  alt={channel.channel_id}
-                  width="60px"
-                />
-              </div>
-              {channel.shows.map((show, index) => (
-                <div key={index} className="cell" style={getCustomStyle(show.duration)}>
-                  <span>{show.title}</span>
-                </div>
-              ))}
+        {channelsToShow.map((channel, index) => (
+          <div className="row">
+            <div key={index} className="channel-cell channel">
+              <img
+                src={
+                  ChannelMediasetLogoMap[channel.channel_id] ||
+                  ChannelRaiLogoMap[channel.channel_id]
+                }
+                alt={channel.channel_id}
+                width="60px"
+              />
             </div>
-          ))}
-      </div>
-    );
-  }
-  else{
-    let sorting = ["rai-1", "rai-2", "rai-3", "R4", "C5", "I1", "LB", "KI", "TS", "KA", "B6", "FU", "LT", "I2", "KF", "KQ", "rai-3", "rai-4", "rai-5", "rai-movie", "rai-premium", "rai-news-24", "KB", "rai-gulp","rai-yoyo", "LA"];
-    let allChannels = channelsWithShows;
-    channelsWithShows.sort((a, b) => {
-      return sorting.indexOf(a.channel_id) - sorting.indexOf(b.channel_id);
-    });
-    console.log("channel:", allChannels)
-    return (
-      <div id="guide">
-        <div className="row timeline">
-          <div className="time-cell channel-top"></div>
-          <div className="time-cell">
-            <span id="">On now</span>
+            {channel.shows.map((show, index) => {
+              let starttime = new Date(show.start_time).getTime();
+              let endtime = new Date(show.end_time).getTime();
+              let nowtime = new Date().getTime();
+              if (starttime <= nowtime && endtime >= nowtime) {
+                return (
+                  <div
+                    key={index}
+                    className="cell bg-red-600 text-white hover:bg-accent"
+                    style={getCustomStyle(show.duration)}
+                    onClick={() => {
+                      setCurrentShow({
+                        title: show.title,
+                        start_time: new Date(show.start_time),
+                        end_time: new Date(show.end_time),
+                        description: show.description,
+                      });
+                      document.getElementById("show_more_modal").showModal();
+                    }}
+                  >
+                    <span>{show.title}</span>
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    key={index}
+                    className="cell bg-neutral text-white hover:bg-accent"
+                    style={getCustomStyle(show.duration)}
+                    onClick={() => {
+                      setCurrentShow({
+                        title: show.title,
+                        start_time: new Date(show.start_time),
+                        end_time: new Date(show.end_time),
+                        description: show.description,
+                      });
+                      document.getElementById("show_more_modal").showModal();
+                    }}
+                  >
+                    <span>{show.title}</span>
+                  </div>
+                );
+              }
+            })}
           </div>
-          {intervals.map((interval, index) => (
-            <div key={index} className="time-cell">
-              <span>{interval}</span>
-            </div>
-          ))}
-        </div>
-  
-          {channelsWithShows.map((channel, index) => (
-            <div className="row">
-              <div key={index} className="channel-cell channel">
-                <img
-                  src={ChannelMediasetLogoMap[channel.channel_id] || ChannelRaiLogoMap[channel.channel_id]}
-                  alt={channel.channel_id}
-                  width="60px"
-                />
-              </div>
-              {channel.shows.map((show, index) => (
-                <div key={index} className="cell" style={getCustomStyle(show.duration)}>
-                  <span>{show.title}</span>
-                </div>
-              ))}
-            </div>
-          ))}
+        ))}
       </div>
-    );
-  }
+      <dialog id="show_more_modal" className="modal left-0 z-50">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">{currentShow.title}</h3>
+          <p className="py-4">{currentShow.description}</p>
+        </div>
+      </dialog>
+    </>
+  );
 }
 
 export default Grid;

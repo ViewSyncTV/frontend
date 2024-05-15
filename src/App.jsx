@@ -3,6 +3,9 @@ import { fetch_my_assets } from "./api/fetch_my_assets";
 import RaiPage from "./pages/RaiPage";
 import MediasetPage from "./pages/MediasetPage";
 import AllPage from "./pages/AllPage";
+import FavoritesPage from "./pages/FavoritesPage";
+import RecommendedPage from "./pages/RecommendedPage";
+import RemindersPage from "./pages/RemindersPage";
 import Callback from "./Callback";
 
 import "./App.css";
@@ -182,8 +185,46 @@ function App(props) {
               >
                 <MediasetPage />
               </div>
-              
+              <div
+                className={
+                  "tabcontent " + (activeTab === "favorites" ? "active" : "")
+                }
+                id="favorites"
+                style={
+                  activeTab === "favorites"
+                    ? { display: "block" }
+                    : { display: "none" }
+                }
+              >
+                <FavoritesPage />
             </div>
+            <div
+                className={
+                  "tabcontent " + (activeTab === "recommended" ? "active" : "")
+                }
+                id="recommended"
+                style={
+                  activeTab === "recommended"
+                    ? { display: "block" }
+                    : { display: "none" }
+                }
+              >
+                <RecommendedPage />
+            </div>
+            <div
+                className={
+                  "tabcontent " + (activeTab === "popular" ? "active" : "")
+                }
+                id="popular"
+                style={
+                  activeTab === "popular"
+                    ? { display: "block" }
+                    : { display: "none" }
+                }
+              >
+                <RemindersPage />
+            </div>
+          </div>
           </div>
         </Layout>
       )}

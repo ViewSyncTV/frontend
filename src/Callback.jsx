@@ -6,7 +6,9 @@ const PROCESS_CENTRIC_SERVICE_URL =
 
 function Callback(props) {
   const code = window.location.href.split("code=")[1];
-
+  console.log("code: ", code)
+  console.log("url: ", PROCESS_CENTRIC_SERVICE_URL)
+  
   useEffect(() => {
     fetch(`${PROCESS_CENTRIC_SERVICE_URL}/api/auth?code=${code}`, {
       method: "GET",
@@ -23,7 +25,6 @@ function Callback(props) {
         window.location.replace("/");
       });
   }, [code]);
-
   return <div></div>;
 }
 
