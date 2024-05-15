@@ -1,4 +1,3 @@
-import { FaRegHeart } from "react-icons/fa";
 import "./Grid.css";
 import { useEffect, useState } from "react";
 import Rete4 from "../loghi/mediaset-logo/Rete4.svg";
@@ -60,11 +59,12 @@ const ChannelRaiLogoMap = {
 };
 
 function getCustomStyle(duration) {
-  let width = (duration * 1004) / 120;
+  let width = (duration * 1004) / 120 - 4;
   let height = 70;
   return {
     width: `${width}px`,
     height: `${height}px`,
+    'margin': "1px 2px 1px 2px",
   };
 }
 
@@ -221,7 +221,6 @@ function Grid(props) {
     "I2",
     "KF",
     "KQ",
-    "rai-3",
     "rai-4",
     "rai-5",
     "rai-movie",
@@ -232,7 +231,6 @@ function Grid(props) {
     "rai-yoyo",
     "LA",
   ];
-  let allChannels = channelsWithShows;
   channelsWithShows.sort((a, b) => {
     return sorting.indexOf(a.channel_id) - sorting.indexOf(b.channel_id);
   });
@@ -250,7 +248,7 @@ function Grid(props) {
       <div id="guide">
         <div className="row timeline">
           <div className="time-cell channel-top"></div>
-          <div className="time-cell bg-red-600">
+          <div className="time-cell bg-red-600/75">
             <span id="">On now</span>
           </div>
           {intervals.map((interval, index) => (
@@ -275,50 +273,34 @@ function Grid(props) {
               let starttime = new Date(show.start_time).getTime();
               let endtime = new Date(show.end_time).getTime();
               let nowtime = new Date().getTime();
-              if (starttime <= nowtime && endtime >= nowtime) {
-                return (
+              return (
+                <div className="tooltip tooltip-accent" data-tip={show.title}>
                   <div
                     key={index}
-                    className="cell bg-red-600 text-white hover:bg-accent"
+                    className={"cell text-white hover:bg-accent/75" + ((starttime <= nowtime && endtime >= nowtime) ? " bg-red-600/75" : " bg-neutral")}
                     style={getCustomStyle(show.duration)}
                     onClick={() => {
+                      console.log("Now setting current show...");
                       setCurrentShow({
                         title: show.title,
                         start_time: new Date(show.start_time),
                         end_time: new Date(show.end_time),
                         description: show.description,
                       });
+                      console.log("Set current show.");
                       document.getElementById("show_more_modal").showModal();
+                      console.log("Opened modal.");
                     }}
                   >
                     <span>{show.title}</span>
                   </div>
-                );
-              } else {
-                return (
-                  <div
-                    key={index}
-                    className="cell bg-neutral text-white hover:bg-accent"
-                    style={getCustomStyle(show.duration)}
-                    onClick={() => {
-                      setCurrentShow({
-                        title: show.title,
-                        start_time: new Date(show.start_time),
-                        end_time: new Date(show.end_time),
-                        description: show.description,
-                      });
-                      document.getElementById("show_more_modal").showModal();
-                    }}
-                  >
-                    <span>{show.title}</span>
-                  </div>
-                );
-              }
+                </div>
+              );
             })}
           </div>
         ))}
       </div>
-      <dialog id="show_more_modal" className="modal left-0 z-50">
+      <dialog id="show_more_modal" className="modal z-50">
         <div className="modal-box">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}

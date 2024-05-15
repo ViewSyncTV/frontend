@@ -1,8 +1,6 @@
 import React, { useState, lazy, useEffect } from "react";
 import { fetch_my_assets } from "./api/fetch_my_assets";
-import RaiPage from "./pages/RaiPage";
-import MediasetPage from "./pages/MediasetPage";
-import AllPage from "./pages/AllPage";
+import Palinsesto from "./pages/Palinsesto";
 import FavoritesPage from "./pages/FavoritesPage";
 import RecommendedPage from "./pages/RecommendedPage";
 import RemindersPage from "./pages/RemindersPage";
@@ -148,42 +146,16 @@ function App(props) {
               </div>
               <div
                 className={
-                  "tabcontent " + (activeTab === "all_channels" ? "active" : "")
+                  "tabcontent " + ((activeTab === "all_channels" || activeTab === "rai" || activeTab === "mediaset") ? "active" : "")
                 }
-                id="all_channels"
+                id="palinsesto"
                 style={
-                  activeTab === "all_channels"
+                  (activeTab === "all_channels" || activeTab === "rai" || activeTab === "mediaset")
                     ? { display: "block" }
                     : { display: "none" }
                 }
               >
-                <AllPage />
-              </div>
-              <div
-                className={
-                  "tabcontent " + (activeTab === "rai" ? "active" : "")
-                }
-                id="rai"
-                style={
-                  activeTab === "rai"
-                    ? { display: "block" }
-                    : { display: "none" }
-                }
-              >
-                <RaiPage />
-              </div>
-              <div
-                className={
-                  "tabcontent " + (activeTab === "mediaset" ? "active" : "")
-                }
-                id="mediaset"
-                style={
-                  activeTab === "mediaset"
-                    ? { display: "block" }
-                    : { display: "none" }
-                }
-              >
-                <MediasetPage />
+                <Palinsesto ch={activeTab} />
               </div>
               <div
                 className={

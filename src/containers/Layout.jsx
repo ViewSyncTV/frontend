@@ -1,8 +1,7 @@
 import React from "react";
 import CustomNavbar from "./CustomNavbar";
 import CustomSidebar from "./CustomSidebar";
-import AssetType from "../types/AssetType";
-// import Footer from "./Footer";
+
 
 function Layout(props) {
   return (
@@ -27,13 +26,6 @@ function Layout(props) {
           setIsAuth={props.setIsAuth}
         />
         <div className="px-4 pt-4 h-[90vh]">{props.children}</div>
-        <div className="sticky bottom-0 mb-0 pb-0 w-full lg:hidden">
-          {props.loading ? (
-            <progress className="progress progress-info text-secondary h-1 w-full mx-4" />
-            ) : (
-            <progress className="progress progress-success text-secondary h-1 w-full mx-4" value="100" max="100" />
-          )}
-        </div>
       </CustomSidebar>
       {/* <Footer /> */}
     </div>
