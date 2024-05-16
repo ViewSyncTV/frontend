@@ -1,6 +1,6 @@
 import React, { useState, lazy, useEffect } from "react";
 import { fetch_my_assets } from "./api/fetch_my_assets";
-import Palinsesto from "./pages/Palinsesto";
+import Live from "./pages/Live";
 import FavoritesPage from "./pages/FavoritesPage";
 import RecommendedPage from "./pages/RecommendedPage";
 import RemindersPage from "./pages/RemindersPage";
@@ -20,21 +20,21 @@ function App(props) {
   const [assets, setAssets] = useState([
     {
       "asset": "All",
-      "category": "Palinsesto",
+      "category": "Live",
       "orderidx": 1,
       "link": "all_channels",
       "description": "",
     },
     {
       "asset": "Mediaset",
-      "category": "Palinsesto",
+      "category": "Live",
       "orderidx": 2,
       "link": "mediaset",
       "description": "",
     },
     {
       "asset": "Rai",
-      "category": "Palinsesto",
+      "category": "Live",
       "orderidx": 3,
       "link": "rai",
       "description": "",
@@ -148,14 +148,14 @@ function App(props) {
                 className={
                   "tabcontent " + ((activeTab === "all_channels" || activeTab === "rai" || activeTab === "mediaset") ? "active" : "")
                 }
-                id="palinsesto"
+                id="live"
                 style={
                   (activeTab === "all_channels" || activeTab === "rai" || activeTab === "mediaset")
                     ? { display: "block" }
                     : { display: "none" }
                 }
               >
-                <Palinsesto ch={activeTab} />
+                <Live ch={activeTab} />
               </div>
               <div
                 className={

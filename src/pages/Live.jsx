@@ -1,10 +1,10 @@
 import Grid from "../components/Grid";
 
 
-function Palinsesto(props) {
+function Live(props) {
   return (
     <Grid ch={props.ch} />
   );
 }
 
-export default Palinsesto;
+export default Live;

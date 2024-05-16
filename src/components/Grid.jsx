@@ -1,5 +1,7 @@
 import "./Grid.css";
 import { useEffect, useState } from "react";
+import { HeartIcon as SolidHeartIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as OutlineHeartIcon, BellAlertIcon } from "@heroicons/react/24/outline";
 import Rete4 from "../loghi/mediaset-logo/Rete4.svg";
 import Canale5 from "../loghi/mediaset-logo/Canale5.svg";
 import Italia1 from "../loghi/mediaset-logo/Italia1.svg";
@@ -26,6 +28,9 @@ import RaiMovie from "../loghi/rai-logo/RaiMovie.svg";
 import RaiPremium from "../loghi/rai-logo/RaiPremium.svg";
 import RaiGulp from "../loghi/rai-logo/RaiGulp.svg";
 import RaiNews24 from "../loghi/rai-logo/RaiNews24.svg";
+import RaiRadio2 from "../loghi/rai-logo/RaiRadio2.svg";
+import RaiSport from "../loghi/rai-logo/RaiSport.svg";
+import RaiStoria from "../loghi/rai-logo/RaiStoria.svg";
 
 const ChannelMediasetLogoMap = {
   R4: Rete4, // Rete4
@@ -56,6 +61,9 @@ const ChannelRaiLogoMap = {
   "rai-premium": RaiPremium, // Rai Premium
   "rai-gulp": RaiGulp, // Rai Gulp
   "rai-news-24": RaiNews24, // Rai News 24
+  "rai-storia": RaiStoria, // Rai Storia
+  "rai-sport": RaiSport, // Rai Sport
+  "rai-radio-2": RaiRadio2, // Rai Radio 2
 };
 
 function getCustomStyle(duration) {
@@ -64,7 +72,7 @@ function getCustomStyle(duration) {
   return {
     width: `${width}px`,
     height: `${height}px`,
-    'margin': "1px 2px 1px 2px",
+    margin: "1px 2px 1px 2px",
   };
 }
 
@@ -84,14 +92,16 @@ function Grid(props) {
     const currentHour = now.getHours(); // 0-23
     let intervals = [];
     for (let i = currentHour; i < currentHour + 24; i++) {
+      // Alle 14:55 sarà 14:00, 14:30, 15:00, ...
       intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`);
       intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`);
     }
-    intervals.shift();
+    intervals.shift(); // Rimuovi 14:00 tenendo da 14:30 in poi (c'è anche l'on now prima)
+    if (now.getMinutes() > 30) { intervals.shift(); } // Se son passate le 14:30 rimuovi anche quello
     //console.log("Intervals", intervals);
     setIntervals(intervals);
     /* ******************** POPULATE CHANNELS ******************** */
-    fetch("http://localhost:3010/api/tv-program/today")
+    fetch("http://localhost:3010/api/tv-program/week")
       .then((response) => response.json())
       .then((data) => {
         /*
@@ -105,7 +115,7 @@ function Grid(props) {
                 id: number,
                 start_time: String (Date),
                 title: String,
-              }, 
+              },
               {...}, ...
             ]
           }
@@ -129,8 +139,12 @@ function Grid(props) {
           let nowtime = new Date().getTime();
           let showsForChannel = data.data.filter(
             (item) =>
-              item.channel_id === channel.channel_id &&
-              new Date(item.end_time).getTime() > nowtime
+              item.channel_id === channel.channel_id && (
+                new Date(item.end_time).getTime() > nowtime
+                 &&
+                new Date(item.start_time).getTime() < nowtime + (60 * 60 * 24 * 1000)
+                
+              )
           );
           showsForChannel = showsForChannel.map((item) => {
             return {
@@ -146,9 +160,16 @@ function Grid(props) {
           });
           // Set a duration in minutes for each show
           showsForChannel = showsForChannel.map((show, index) => {
-            let start_time = new Date(show.start_time);
+            let start_time;
+            if (new Date().getTime() > new Date(show.start_time).getTime()) {
+              let nowtime = new Date();
+              let now_minutes = nowtime.getMinutes();
+              start_time = new Date(nowtime.getTime() - ((now_minutes % 30) * 60 * 1000));
+            }
+            else { start_time = new Date(show.start_time); }
             let end_time = new Date(show.end_time);
             let duration = (end_time - start_time) / 60000;
+            console.log(show.title, "\nStart:", start_time.toString(), "\nEnd: ", end_time.toString(), "\nduration: ", duration);
             return {
               title: show.title,
               start_time: show.start_time,
@@ -230,6 +251,9 @@ function Grid(props) {
     "rai-gulp",
     "rai-yoyo",
     "LA",
+    "rai-storia",
+    "rai-sport",
+    "rai-radio-2"
   ];
   channelsWithShows.sort((a, b) => {
     return sorting.indexOf(a.channel_id) - sorting.indexOf(b.channel_id);
@@ -277,7 +301,12 @@ function Grid(props) {
                 <div className="tooltip tooltip-accent" data-tip={show.title}>
                   <div
                     key={index}
-                    className={"cell text-white hover:bg-accent/75" + ((starttime <= nowtime && endtime >= nowtime) ? " bg-red-600/75" : " bg-neutral")}
+                    className={
+                      "cell text-white hover:bg-accent/75" +
+                      (starttime <= nowtime && endtime >= nowtime
+                        ? " bg-red-600/75"
+                        : " bg-neutral")
+                    }
                     style={getCustomStyle(show.duration)}
                     onClick={() => {
                       console.log("Now setting current show...");
@@ -302,14 +331,22 @@ function Grid(props) {
       </div>
       <dialog id="show_more_modal" className="modal z-50">
         <div className="modal-box">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
+            <BellAlertIcon width="1rem" />
+          </button>
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
+            <OutlineHeartIcon width="1rem" />
+          </button>
           <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-[1rem] top-2">
+              <XMarkIcon width="1rem" />
             </button>
           </form>
-          <h3 className="font-bold text-lg">{currentShow.title}</h3>
+          <h3 className="font-bold text-lg mt-6">{currentShow.title}</h3>
           <p className="py-4">{currentShow.description}</p>
+          <p className="py-4">
+            {currentShow.start_time.toString()} - {currentShow.end_time.toString()}
+          </p>
         </div>
       </dialog>
     </>
