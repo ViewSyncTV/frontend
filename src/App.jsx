@@ -19,7 +19,7 @@ function App(props) {
   const [reloadCounter, setReloadCounter] = useState(0); // Used to force reload of apis when needed
   const [assets, setAssets] = useState([
     {
-      "asset": "All",
+      "asset": "All Channels",
       "category": "Live",
       "orderidx": 1,
       "link": "all_channels",
@@ -64,6 +64,7 @@ function App(props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [isAuth, setIsAuth] = usePersistantState("IS_AUTH", false);
+  const [authData, setAuthData] = usePersistantState("AUTH_DATA", {});
   const [defaultTab, setDefaultTab] = usePersistantState(
     "DEFAULT_TAB",
     "mainpage"
@@ -76,6 +77,9 @@ function App(props) {
 
   useEffect(() => { if (!isAuth) { setAccessToken(""); console.log("Now removing old access token!"); } else { console.log("Welcome: ", accessToken); } }, [isAuth]);
   useEffect(() => {
+    if (authData !== undefined) {
+      console.log("Data: ", authData);
+    }
     if (assets !== undefined && assets.length > 0) {
       console.log("Assets: ", assets);
     }
@@ -94,7 +98,7 @@ function App(props) {
 
 
   if (window.location.href.includes("callback")) {
-    return <Callback setIsAuth={setIsAuth} setAccessToken={setAccessToken} />;
+    return <Callback setIsAuth={setIsAuth} setAccessToken={setAccessToken} setAuthData={setAuthData} />;
   }
 
 
@@ -114,6 +118,7 @@ function App(props) {
           isDevelopment={isDevelopment}
           isAuth={isAuth}
           setIsAuth={setIsAuth}
+          authData={authData}
           className=""
         >
           <div className="card block bg-base-100 shadow-lg overflow-y-scroll">

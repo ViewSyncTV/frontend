@@ -34,7 +34,7 @@ function CustomNavbar(props) {
         setTheme={props.setTheme}
         className="flex-none"
       />
-      <CustomPhoto userName={props.userName} isAuth={props.isAuth} setIsAuth={props.setIsAuth} />
+      <CustomPhoto userName={props.userName} isAuth={props.isAuth} setIsAuth={props.setIsAuth} authData={props.authData} />
     </div>
   );
 }

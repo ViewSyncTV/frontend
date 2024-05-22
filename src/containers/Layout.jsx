@@ -24,6 +24,7 @@ function Layout(props) {
           userName={props.userName}
           isAuth={props.isAuth}
           setIsAuth={props.setIsAuth}
+          authData={props.authData}
         />
         <div className="px-4 pt-4 h-[90vh]">{props.children}</div>
       </CustomSidebar>
