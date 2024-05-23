@@ -84,6 +84,7 @@ function Grid(props) {
     start_time: new Date(),
     end_time: new Date(),
     description: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -104,6 +105,7 @@ function Grid(props) {
     fetch("http://localhost:3010/api/tv-program/week")
       .then((response) => response.json())
       .then((data) => {
+        console.log("Returned Data From Week: ", data);
         /*
           {
             "data": [
@@ -152,6 +154,7 @@ function Grid(props) {
               start_time: item.start_time,
               end_time: item.end_time,
               description: item.description,
+              category: item.channel,
             };
           });
           // Order shows by start_time
@@ -169,13 +172,14 @@ function Grid(props) {
             else { start_time = new Date(show.start_time); }
             let end_time = new Date(show.end_time);
             let duration = (end_time - start_time) / 60000;
-            console.log(show.title, "\nStart:", start_time.toString(), "\nEnd: ", end_time.toString(), "\nduration: ", duration);
+            //console.log(show.title, "\nStart:", start_time.toString(), "\nEnd: ", end_time.toString(), "\nduration: ", duration);
             return {
               title: show.title,
               start_time: show.start_time,
               end_time: show.end_time,
               description: show.description,
               duration: duration,
+              category: show.category,
             };
           });
           shows.push({
@@ -187,6 +191,15 @@ function Grid(props) {
         //console.log("Shows", shows);
       });
   }, []);
+  const [currentPoster, setCurrentPoster] = useState("");
+  const [loadImage, setLoadImage] = useState(0);
+  useEffect(() => {
+    console.log("Now updating the current show details since it is a movie");
+    let title = currentShow.title;
+    fetch(`http://localhost:3010/api/program-metadata/movie/${title}`)
+      .then((response) => response.json())
+      .then((res) => setCurrentPoster(res.data.poster_path));
+    }, [loadImage]);
 
   function handleChannelClick(e) {
     e.preventDefault();
@@ -309,13 +322,20 @@ function Grid(props) {
                     }
                     style={getCustomStyle(show.duration)}
                     onClick={() => {
-                      console.log("Now setting current show...");
+                      // TODO: Load Image Here if it is a Movie
+                      // ? Query /api/program-metadata/movie/[title separato da trattini minuscolo]
+                      console.log("Opening Show: ", show);
                       setCurrentShow({
                         title: show.title,
                         start_time: new Date(show.start_time),
                         end_time: new Date(show.end_time),
                         description: show.description,
+                        category: show.category,
                       });
+                      if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film") {
+                        setLoadImage(loadImage + 1);
+                      } else { setCurrentPoster(""); }
+                      console.log("Now setting current show...");
                       console.log("Set current show.");
                       document.getElementById("show_more_modal").showModal();
                       console.log("Opened modal.");
@@ -330,23 +350,28 @@ function Grid(props) {
         ))}
       </div>
       <dialog id="show_more_modal" className="modal z-50">
-        <div className="modal-box">
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
-            <BellAlertIcon width="1rem" />
-          </button>
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
-            <OutlineHeartIcon width="1rem" />
-          </button>
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-[1rem] top-2">
-              <XMarkIcon width="1rem" />
-            </button>
-          </form>
-          <h3 className="font-bold text-lg mt-6">{currentShow.title}</h3>
-          <p className="py-4">{currentShow.description}</p>
-          <p className="py-4">
-            {currentShow.start_time.toString()} - {currentShow.end_time.toString()}
-          </p>
+        <div className="modal-box bg-base-100 image-full card p-0 max-h-[32rem] max-w-[35rem]">
+          <figure><img src={currentPoster} className="w-[36rem] h-[32rem] object-none" /></figure>
+          <div className="card-body">
+            <div className="card-actions">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
+                <BellAlertIcon width="1rem" />
+              </button>
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
+                <OutlineHeartIcon width="1rem" />
+              </button>
+              <form method="dialog">
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-[1rem] top-2">
+                  <XMarkIcon width="1rem" />
+                </button>
+              </form>
+            </div>
+            <h3 className="font-bold text-lg mt-6 card-title">{currentShow.title}</h3>
+            <p className="py-4">{currentShow.description}</p>
+            <p className="py-4">
+              {currentShow.start_time.toString()} - {currentShow.end_time.toString()}
+            </p>
+          </div>
         </div>
       </dialog>
     </>

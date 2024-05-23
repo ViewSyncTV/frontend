@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
 
 const PROCESS_CENTRIC_SERVICE_URL =
@@ -17,15 +16,15 @@ function Callback(props) {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Accept: "aplication/json",
+        Accept: "application/json",
       },
     })
       .then((res) => res.json())
-      .then(({data}) => {
-        console.log("Data: ", data);
+      .then((res) => {
+        console.log("Data: ", res);
         props.setIsAuth(true);
         props.setAccessToken(code);
-        props.setAuthData(jwtDecode(data.id_token));
+        props.setAuthData(res.data.user);
         window.location.replace("/");
       });
   }, [code]);
