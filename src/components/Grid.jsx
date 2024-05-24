@@ -369,7 +369,7 @@ function Grid(props) {
             <h3 className="font-bold text-lg mt-6 card-title">{currentShow.title}</h3>
             <p className="py-4">{currentShow.description}</p>
             <p className="py-4">
-              {currentShow.start_time.toString()} - {currentShow.end_time.toString()}
+              Schedule: {currentShow.start_time.toString().split(" ")[4]} - {currentShow.end_time.toString().split(" ")[4]}
             </p>
           </div>
         </div>

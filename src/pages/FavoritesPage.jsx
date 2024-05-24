@@ -5,7 +5,7 @@ import CustomCard from "../components/CustomCard";
 
 function FavoritesPage() {
   return (
-    <div class="grid grid-cols-4 gap-8">
+    <div class="grid grid-cols-3 gap-8">
       <CustomCard
         title="Prima Pagina Tg5"
         description="Prima edizione quotidiana del notiziario televisivo a cura della redazione giornalistica di Canale 5."

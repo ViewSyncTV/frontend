@@ -4,7 +4,7 @@ import CustomCard from "../components/CustomCard";
 
 function RecommendedPage() {
   return (
-    <div class="grid grid-cols-4 gap-8">
+    <div class="grid grid-cols-3 gap-8">
       <CustomCard
         title="Recommended 1"
         description="This is a recommended item"

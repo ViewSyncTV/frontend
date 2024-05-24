@@ -17,6 +17,7 @@ function App(props) {
   const [hasTriedSignin, setHasTriedSignin] = useState(false); // Boilerplate from react-oidc-context github repo
   const [accessToken, setAccessToken] = usePersistantState("ACCESS_TOKEN", "");
   const [reloadCounter, setReloadCounter] = useState(0); // Used to force reload of apis when needed
+  const day = new Date()
   const [assets, setAssets] = useState([
     {
       "asset": "All Channels",
@@ -160,7 +161,7 @@ function App(props) {
                     : { display: "none" }
                 }
               >
-                <Live ch={activeTab} />
+                <Live ch={activeTab} day={day} />
               </div>
               <div
                 className={
