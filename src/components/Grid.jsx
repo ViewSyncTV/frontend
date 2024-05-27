@@ -67,12 +67,14 @@ const ChannelRaiLogoMap = {
 };
 
 function getCustomStyle(duration) {
-  let width = (duration * 1004) / 120 - 4;
+  let width = (Math.abs(duration) * 1000) / 120 - 0; // -4 px di margine forse servono??? (pare andare senza)
+  console.log("Received Duration: ", Math.abs(duration), " Calculated Width: ", width);
   let height = 70;
   return {
     width: `${width}px`,
     height: `${height}px`,
-    margin: "1px 2px 1px 2px",
+    margin: "1px 0px 1px 0px",
+    padding: "0px",
   };
 }
 
@@ -91,14 +93,19 @@ function Grid(props) {
     /* ******************** POPULATE INTERVALS ******************** */
     const now = new Date(); // Current date and time
     const currentHour = now.getHours(); // 0-23
+    const currentMinute = now.getMinutes(); // 0-59
     let intervals = [];
-    for (let i = currentHour; i < currentHour + 24; i++) {
+    for (let i = 0; i < 24; i++) {
       // Alle 14:55 sarà 14:00, 14:30, 15:00, ...
-      intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`);
-      intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`);
+      if (currentHour === i && currentMinute < 30) { intervals.push("On Now"); }
+      else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`); }
+      if (currentHour === i && currentMinute >= 30) { intervals.push("On Now"); }
+      else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`); }
     }
-    intervals.shift(); // Rimuovi 14:00 tenendo da 14:30 in poi (c'è anche l'on now prima)
-    if (now.getMinutes() > 30) { intervals.shift(); } // Se son passate le 14:30 rimuovi anche quello
+    // intervals.shift(); // Rimuovi 14:00 tenendo da 14:30 in poi (c'è anche l'on now prima)
+    // if (now.getMinutes() > 30) { intervals.shift(); } // Se son passate le 14:30 rimuovi anche quello
+    // Aggiungi "On Now" all'ora corrente
+
     //console.log("Intervals", intervals);
     setIntervals(intervals);
     /* ******************** POPULATE CHANNELS ******************** */
@@ -137,15 +144,18 @@ function Grid(props) {
         // For each channel then get the shows in data and populate the shows
         // TODO: O usiamo una API che mi dia i canali e poi siamo sicuri che i programmi ci siano per tutti, o dobbiamo fare un check
         let shows = [];
+        console.log("Day:" + props.day);
+        let nowtime = new Date(props.day.getFullYear(), props.day.getMonth(), props.day.getDate()).getTime();
+        //let today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        //let diff = props.day - new Date().getDate(); // 0 = today, 1 = tomorrow, 2 = day after tomorrow, ...
+        //let nowtime = today.getTime() + (diff * 60 * 60 * 24 * 1000); // Today at 00:00 + diff days
         channels.forEach((channel) => {
-          let nowtime = new Date().getTime();
           let showsForChannel = data.data.filter(
             (item) =>
               item.channel_id === channel.channel_id && (
                 new Date(item.end_time).getTime() > nowtime
                  &&
                 new Date(item.start_time).getTime() < nowtime + (60 * 60 * 24 * 1000)
-                
               )
           );
           showsForChannel = showsForChannel.map((item) => {
@@ -161,18 +171,49 @@ function Grid(props) {
           showsForChannel.sort((a, b) => {
             return new Date(a.start_time) - new Date(b.start_time);
           });
+          // Check if each show is consecutive to the previous one, if there are holes, fill them with an empty show
+          // If any show has the same start_time as the previous one, it should not be included in the filled array as it is a duplicate to be removed
+          let showsForChannelFilled = [];
+          let today = new Date(props.day.getFullYear(), props.day.getMonth(), props.day.getDate());
+          // let today = new Date(new Date().getFullYear(), new Date().getMonth(), props.day);
+          let lastStartTime = today.getTime() - 100;
+          let lastEndTime = today;
+          showsForChannel.forEach((show) => {
+            let start_time = new Date(show.start_time);
+            let end_time = new Date(show.end_time);
+            if (start_time > lastEndTime) {
+              let duration = (start_time - lastEndTime) / 60000; // in minutes
+              if (duration > 4) {
+                showsForChannelFilled.push({
+                  title: "",
+                  start_time: lastEndTime,
+                  end_time: start_time,
+                  description: "",
+                  duration: duration,
+                  category: "",
+                });
+              }
+            }
+            
+            if (Math.abs(start_time.getTime() - lastStartTime) > 4) {
+              showsForChannelFilled.push(show);
+            }
+            lastStartTime = start_time.getTime();
+            lastEndTime = end_time;
+          });
+          showsForChannel = showsForChannelFilled;
           // Set a duration in minutes for each show
           showsForChannel = showsForChannel.map((show, index) => {
-            let start_time;
-            if (new Date().getTime() > new Date(show.start_time).getTime()) {
-              let nowtime = new Date();
-              let now_minutes = nowtime.getMinutes();
-              start_time = new Date(nowtime.getTime() - ((now_minutes % 30) * 60 * 1000));
-            }
-            else { start_time = new Date(show.start_time); }
+            let start_time = new Date(show.start_time);
             let end_time = new Date(show.end_time);
-            let duration = (end_time - start_time) / 60000;
-            //console.log(show.title, "\nStart:", start_time.toString(), "\nEnd: ", end_time.toString(), "\nduration: ", duration);
+            if (start_time.getDate() !== end_time.getDate()) {
+              if (props.day.getDate() === start_time.getDate()) {
+                end_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate(), 23, 59, 59);
+              } else {
+                start_time = new Date(end_time.getFullYear(), end_time.getMonth(), end_time.getDate(), 0, 0, 0);
+              }
+            }
+            let duration = (end_time - start_time) / 60000; // in minutes
             return {
               title: show.title,
               start_time: show.start_time,
@@ -190,7 +231,7 @@ function Grid(props) {
         setChannelsWithShows(shows);
         //console.log("Shows", shows);
       });
-  }, []);
+  }, [props.day]);
   const [currentPoster, setCurrentPoster] = useState("");
   const [loadImage, setLoadImage] = useState(0);
   useEffect(() => {
@@ -285,14 +326,22 @@ function Grid(props) {
       <div id="guide">
         <div className="row timeline">
           <div className="time-cell channel-top"></div>
-          <div className="time-cell bg-red-600/75">
-            <span id="">On now</span>
-          </div>
-          {intervals.map((interval, index) => (
-            <div key={index} className="time-cell bg-neutral">
-              <span>{interval}</span>
-            </div>
-          ))}
+          {intervals.map((interval, index) => {
+            if (interval === "On Now") {
+              return (
+                <div key={index} className="time-cell bg-red-600/75">
+                  <span>{interval}</span>
+                </div>
+              );
+            } else {
+              return (
+              <div key={index} className="time-cell bg-neutral">
+                <span>{interval}</span>
+              </div>
+              );
+            }
+        }
+        )}
         </div>
         {channelsToShow.map((channel, index) => (
           <div className="row">
@@ -311,11 +360,12 @@ function Grid(props) {
               let endtime = new Date(show.end_time).getTime();
               let nowtime = new Date().getTime();
               return (
-                <div className="tooltip tooltip-accent" data-tip={show.title}>
+                <div className={show.title === "" ? "" : "tooltip tooltip-accent"} data-tip={show.title}>
                   <div
                     key={index}
                     className={
-                      "cell text-white hover:bg-accent/75" +
+                    (show.title === "" ? "cell-disabled " : "hover:bg-accent/75 cell ") +
+                      "cell text-white" +
                       (starttime <= nowtime && endtime >= nowtime
                         ? " bg-red-600/75"
                         : " bg-neutral")
@@ -324,6 +374,7 @@ function Grid(props) {
                     onClick={() => {
                       // TODO: Load Image Here if it is a Movie
                       // ? Query /api/program-metadata/movie/[title separato da trattini minuscolo]
+                      if (show.title === "") { return; } // Do not open modal for empty shows
                       console.log("Opening Show: ", show);
                       setCurrentShow({
                         title: show.title,
