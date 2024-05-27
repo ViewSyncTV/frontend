@@ -154,7 +154,7 @@ function Grid(props) {
               start_time: item.start_time,
               end_time: item.end_time,
               description: item.description,
-              category: item.channel,
+              category: item.category,
             };
           });
           // Order shows by start_time
