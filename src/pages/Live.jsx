@@ -23,7 +23,7 @@ function Live(props) {
           else { return <a role="tab" className="tab" key={index} onClick={() => setTabDay(index, days[index], setCurrentDay)}>{day}</a>; }
         })}
       </div>
-      <Grid ch={props.ch} day={currentDay} />
+      <Grid ch={props.ch} day={currentDay}/>
     </div>
   );
 }

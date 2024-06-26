@@ -68,7 +68,7 @@ const ChannelRaiLogoMap = {
 
 function getCustomStyle(duration) {
   let width = (Math.abs(duration) * 1000) / 120 - 0; // -4 px di margine forse servono??? (pare andare senza)
-  console.log("Received Duration: ", Math.abs(duration), " Calculated Width: ", width);
+  // console.log("Received Duration: ", Math.abs(duration), " Calculated Width: ", width);
   let height = 70;
   return {
     width: `${width}px`,
@@ -88,18 +88,57 @@ function Grid(props) {
     description: "",
     category: "",
   });
+  /**
+   * Array of { movie_id: number | null, tvshow_id: number | null }
+   */
+  const [favourites, setFavourites] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
+  const [updateFavourites, setUpdateFavourites] = useState(0);
+
+  useEffect(() => {
+    fetch("http://localhost:3010/api/tv-program/favorites", {
+      method: "GET",
+      credentials: "include"
+    })
+    .then(response => response.json())
+    .then(res => {
+      console.log("Response Favourites From Server: ", res);
+      if (res && res.data) { setFavourites(res.data); }
+    })
+    .catch(error => { console.error("Error:", error); });
+  }, [updateFavourites]);
+
+  useEffect(() => {
+    console.log("Entered in toggleLiked() method");
+    var postData = null;
+    console.log("toggleLiked() Category: ", currentShow.category);
+    if(currentShow.category == "TV Show") { postData = { tvshow_id: currentShowDetails.id, title: currentShowDetails.title}; }
+    else { postData = { movie_id: currentShowDetails.id, title: currentShowDetails.title}; }
+    let correctMethod = isLiked ? "DELETE" : "POST";
+    fetch('http://localhost:3010/api/tv-program/favorite', {
+        method: correctMethod,
+        credentials: "include",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+      })
+      .then(response => response.json())
+      .then(res => { console.log("Response from server for toggleLiked() method: ", res); })
+      .catch(error => { console.error("Error:", error); });
+  }, [isLiked]);
 
   useEffect(() => {
     /* ******************** POPULATE INTERVALS ******************** */
     const now = new Date(); // Current date and time
     const currentHour = now.getHours(); // 0-23
     const currentMinute = now.getMinutes(); // 0-59
+    const currentDay = now.getDay()
+
     let intervals = [];
     for (let i = 0; i < 24; i++) {
       // Alle 14:55 sarà 14:00, 14:30, 15:00, ...
-      if (currentHour === i && currentMinute < 30) { intervals.push("On Now"); }
+      if (currentHour === i && currentMinute < 30 && currentDay == props.day.getDay() ) { intervals.push("On Now"); }
       else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`); }
-      if (currentHour === i && currentMinute >= 30) { intervals.push("On Now"); }
+      if (currentHour === i && currentMinute >= 30 && currentDay == props.day.getDay()) { intervals.push("On Now"); }
       else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`); }
     }
     // intervals.shift(); // Rimuovi 14:00 tenendo da 14:30 in poi (c'è anche l'on now prima)
@@ -149,7 +188,9 @@ function Grid(props) {
         //let today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
         //let diff = props.day - new Date().getDate(); // 0 = today, 1 = tomorrow, 2 = day after tomorrow, ...
         //let nowtime = today.getTime() + (diff * 60 * 60 * 24 * 1000); // Today at 00:00 + diff days
+        channels = channels.filter((channel) => channel.channel_id !== "raiplay-3");
         channels.forEach((channel) => {
+          //console.log(channel)
           let showsForChannel = data.data.filter(
             (item) =>
               item.channel_id === channel.channel_id && (
@@ -232,14 +273,33 @@ function Grid(props) {
         //console.log("Shows", shows);
       });
   }, [props.day]);
-  const [currentPoster, setCurrentPoster] = useState("");
+  //const [currentPoster, setCurrentPoster] = useState("");
+  const [currentShowDetails, setCurrentShowDetails] = useState({});
   const [loadImage, setLoadImage] = useState(0);
   useEffect(() => {
     console.log("Now updating the current show details since it is a movie");
     let title = currentShow.title;
-    fetch(`http://localhost:3010/api/program-metadata/movie/${title}`)
+    let category = currentShow.category; // * TV Show | Movie | Film
+    let cat = category === "TV Show" ? "tv-show" : (category === "Movie" ? "movie" : (category === "Film" ? "movie" : "other"));
+    if (cat === "other") { return; } // Do not load image for other categories
+    fetch(`http://localhost:3010/api/program-metadata/${cat}/${title}`)
       .then((response) => response.json())
-      .then((res) => setCurrentPoster(res.data.poster_path));
+      .then((res) => {
+        console.log("Returned Details: ", res);
+        if (res && res.error) {
+          fetch(`http://localhost:3010/api/program-metadata/tv-show/${title}`)
+          .then((response) => response.json())
+          .then((res) => {
+            console.log("Returned Details: ", res);
+            if (res && res.error) { return; }
+            setCurrentShowDetails(res.data);
+            checkIfLiked(currentShow, res.data, favourites) ? setIsLiked(true) : setIsLiked(false)
+          });
+          return;
+        }
+        setCurrentShowDetails(res.data);
+        checkIfLiked(currentShow, res.data, favourites) ? setIsLiked(true) : setIsLiked(false)
+      })
     }, [loadImage]);
 
   function handleChannelClick(e) {
@@ -385,7 +445,7 @@ function Grid(props) {
                       });
                       if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film") {
                         setLoadImage(loadImage + 1);
-                      } else { setCurrentPoster(""); }
+                      } else { setCurrentShowDetails({}); }
                       console.log("Now setting current show...");
                       console.log("Set current show.");
                       document.getElementById("show_more_modal").showModal();
@@ -402,31 +462,86 @@ function Grid(props) {
       </div>
       <dialog id="show_more_modal" className="modal z-50">
         <div className="modal-box bg-base-100 image-full card p-0 max-h-[32rem] max-w-[35rem]">
-          <figure><img src={currentPoster} className="w-[36rem] h-[32rem] object-none" /></figure>
+          <figure><img src={currentShowDetails.poster_path} className="w-[36rem] h-[32rem] object-none" /></figure>
           <div className="card-body">
             <div className="card-actions">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
-                <BellAlertIcon width="1rem" />
-              </button>
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
-                <OutlineHeartIcon width="1rem" />
-              </button>
+              {currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" ? (
+                <>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
+                    <BellAlertIcon width="1rem"/>
+                  </button>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites)}>
+                    {isLiked ? <SolidHeartIcon width="1rem" /> : <OutlineHeartIcon width="1rem" /> }
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
+                    <BellAlertIcon width="1rem" />
+                  </button>
+                </>
+              )}
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-[1rem] top-2">
                   <XMarkIcon width="1rem" />
                 </button>
               </form>
             </div>
-            <h3 className="font-bold text-lg mt-6 card-title">{currentShow.title}</h3>
-            <p className="py-4">{currentShow.description}</p>
-            <p className="py-4">
-              Schedule: {currentShow.start_time.toString().split(" ")[4]} - {currentShow.end_time.toString().split(" ")[4]}
-            </p>
+            <div className="card-title flex-col flex items-start">
+              <h2 className="text-lg mt-6 font-bold flex-none">{currentShow.title}</h2>
+              <div className="rating gap-1 flex-1 h-0.5">
+                <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-red-400" />
+                <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-orange-400" checked />
+                <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-yellow-400" />
+                <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-lime-400" />
+                <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-green-400" />
+              </div>
+            </div>
+            {currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" ? (
+              <>
+                <div className="space-x-2">
+                  {currentShowDetails && currentShowDetails.genres && currentShowDetails.genres.map((genre, index) => (
+                    <div key={index} className="badge badge-accent">{genre}</div>
+                  ))}
+                </div>
+                <div>
+                  <div className="badge badge-primary">{((currentShow.end_time ?? new Date()) - (currentShow.start_time ?? new Date())) / (1000 * 60)} min</div>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+            <p className="py-4 mt-4">{currentShow.description}</p>
+            <div className="py-4 absolute bottom-1 space-x-2">
+              <div className="badge badge-info">{`${new Intl.DateTimeFormat("it-IT", {timeStyle: "short"}).format(currentShow.start_time ?? new Date())} → ${new Intl.DateTimeFormat("it-IT", {timeStyle: "short"}).format(currentShow.end_time ?? new Date())}`}</div>
+            </div>
           </div>
         </div>
       </dialog>
     </>
   );
+}
+
+function checkIfLiked(currentShow, currentShowDetails, favourites) {
+  let currentlyLiked = false;
+  favourites.forEach((fav) => {
+    console.log("Favourite checking now: ", fav);
+    if (currentShow.category === "TV Show") {
+      if (fav.tvshow_id === currentShowDetails.id) { currentlyLiked = true; }
+    } else {
+      if (fav.movie_id === currentShowDetails.id) { currentlyLiked = true; }
+    }
+  });
+  return currentlyLiked;
+}
+
+function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites) {
+  console.log("Entered in handleLikeClick() method");
+  console.log("Favourites: ", favourites);
+  let currentlyLiked = checkIfLiked(currentShow, currentShowDetails, favourites);
+  setIsLiked(!currentlyLiked);
+  setUpdateFavourites(updateFavourites + 1);
+  console.log("Current Show ID: ", currentShowDetails.id);
 }
 
 export default Grid;

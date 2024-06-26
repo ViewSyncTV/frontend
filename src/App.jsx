@@ -161,7 +161,7 @@ function App(props) {
                     : { display: "none" }
                 }
               >
-                <Live ch={activeTab} day={day} />
+                <Live ch={activeTab} day={day} isAuth={isAuth} />
               </div>
               <div
                 className={

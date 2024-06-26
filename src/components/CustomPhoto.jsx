@@ -2,8 +2,6 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 function CustomPhoto(props) {
-  console.log("CustomPhoto Data: ", props);
-  console.log("Picture URL: ", props.authData.picture);
   return (
     <>
       {props.isAuth ? (

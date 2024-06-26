@@ -3,46 +3,46 @@ import CustomCard from "../components/CustomCard";
 
 function RemindersPage() {
   return (
-    <div class="grid grid-cols-4 gap-8">
+    <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
       <CustomCard
-        title="Recommended 1"
-        description="This is a recommended item"
+        title="Reminders 1"
+        description="This is a reminders item"
         channel="Channel 1"
         airing_in="2 days"
         color="bg-success"
       />
       <CustomCard
-        title="Recommended 2"
-        description="This is a recommended item"
+        title="Reminders 2"
+        description="This is a reminders item"
         channel="Channel 2"
         airing_in="3 days"
         color="bg-success"
       />
       <CustomCard
-        title="Recommended 2"
-        description="This is a recommended item"
-        channel="Channel 2"
+        title="Reminders 3"
+        description="This is a reminders item"
+        channel="Channel 3"
         airing_in="3 days"
         color="bg-success"
       />
       <CustomCard
-        title="Recommended 2"
-        description="This is a recommended item"
-        channel="Channel 2"
+        title="Reminders 4"
+        description="This is a reminders item"
+        channel="Channel 4"
         airing_in="3 days"
         color="bg-success"
       />
       <CustomCard
-        title="Recommended 2"
-        description="This is a recommended item"
-        channel="Channel 2"
+        title="Reminders 5"
+        description="This is a reminders item"
+        channel="Channel 5"
         airing_in="3 days"
         color="bg-success"
       />
       <CustomCard
-        title="Recommended 2"
-        description="This is a recommended item"
-        channel="Channel 2"
+        title="Reminders 6"
+        description="This is a reminders item"
+        channel="Channel 6"
         airing_in="3 days"
         color="bg-success"
       />
