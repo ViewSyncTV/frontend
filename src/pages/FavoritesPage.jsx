@@ -2,65 +2,13 @@ import { useState, useEffect} from "react";
 import Grid from "../components/Grid";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import CustomCard from "../components/CustomCard";
+import { getFavorites } from "../api/fetch_my_favorites";
 
-
-async function getFavoritesIds() {
-  let favourites = await fetch("http://localhost:3010/api/tv-program/favorites",
-    {
-    method: "GET",
-    credentials: "include"
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        let movie_or_show = data.data.map((item) => item.movie_id ? "Movie" : "Show");
-        let title = data.data.map((item)=> item.title);
-        let favss = data.data.map((item)=> item.movie_id || item.tvshow_id)
-        let fv = favss.map((item, idx) => {
-          return {
-            movie_or_show: movie_or_show[idx],
-            fav_id: item
-          };
-        })
-        return fv;
-      });
-  return favourites;
-}
-
-async function getMetadata(movie_or_show) {
-  let metadata = await fetch(`http://localhost:3010/api/program-metadata/${movie_or_show}/${title}`, { method: "GET", credentials: "include" })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Returned metadata: ", data.data);
-      return {
-        data: data.data,
-        type: movie_or_show
-      };
-    });
-  return metadata;
-}
-
-async function getAll(){
-  
-}
 
 function FavoritesPage() {
   const [favourites, setFavourites] = useState([]);
   useEffect( () => {
-
-    const c = async () => {
-
-    let b = []
-      let favs = await getFavoritesIds();
-      for (let i = 0; i < favs.length; i++) {
-        let metadata = await getMetadata(favs[i].movie_or_show === "Movie" ? "movie" : "tv-show");
-        b.push(metadata);
-      }
-      setFavourites(b)
-    }
-
-    c();
-
-    console.log("Loaded metadata of favs: ", favourites);
+      getFavorites(favourites, setFavourites);
       // console.log("Loaded metadata of favs: ", favourites);
   }, []);
     
@@ -87,11 +35,11 @@ function FavoritesPage() {
       */
   return (
     <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
-      {favourites.map((item, index) => {
+      {favourites.map((item, _) => {
         console.log("Item: ", item);
         return (
           <CustomCard
-            title={item.data.title}
+            title={item.title}
             description={item.data.description.substring(0, 150) + "..."}
             channel={"HBO"}
             airing_in={"30m"}

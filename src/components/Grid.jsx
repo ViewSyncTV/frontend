@@ -94,6 +94,7 @@ function Grid(props) {
   const [favourites, setFavourites] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [updateFavourites, setUpdateFavourites] = useState(0);
+  const [updateLiked, setUpdateLiked] = useState(0);
 
   useEffect(() => {
     fetch("http://localhost:3010/api/tv-program/favorites", {
@@ -112,9 +113,11 @@ function Grid(props) {
     console.log("Entered in toggleLiked() method");
     var postData = null;
     console.log("toggleLiked() Category: ", currentShow.category);
-    if(currentShow.category == "TV Show") { postData = { tvshow_id: currentShowDetails.id, title: currentShowDetails.title}; }
-    else { postData = { movie_id: currentShowDetails.id, title: currentShowDetails.title}; }
-    let correctMethod = isLiked ? "DELETE" : "POST";
+    if(currentShow.category == "TV Show") { postData = { tvshow_id: currentShowDetails.id, title: currentShowDetails.title }; }
+    else { postData = { movie_id: currentShowDetails.id, title: currentShowDetails.title }; }
+    let currentlyLiked = checkIfLiked(currentShow, currentShowDetails, favourites);
+    let correctMethod = currentlyLiked ? "DELETE" : "POST";
+    console.log("Now execute: ", correctMethod)
     fetch('http://localhost:3010/api/tv-program/favorite', {
         method: correctMethod,
         credentials: "include",
@@ -124,7 +127,7 @@ function Grid(props) {
       .then(response => response.json())
       .then(res => { console.log("Response from server for toggleLiked() method: ", res); })
       .catch(error => { console.error("Error:", error); });
-  }, [isLiked]);
+  }, [updateLiked]);
 
   useEffect(() => {
     /* ******************** POPULATE INTERVALS ******************** */
@@ -470,7 +473,7 @@ function Grid(props) {
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
                     <BellAlertIcon width="1rem"/>
                   </button>
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites)}>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites, setUpdateLiked, updateLiked)}>
                     {isLiked ? <SolidHeartIcon width="1rem" /> : <OutlineHeartIcon width="1rem" /> }
                   </button>
                 </>
@@ -535,10 +538,11 @@ function checkIfLiked(currentShow, currentShowDetails, favourites) {
   return currentlyLiked;
 }
 
-function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites) {
+function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites, setUpdateLiked, updateLiked) {
   console.log("Entered in handleLikeClick() method");
   console.log("Favourites: ", favourites);
   let currentlyLiked = checkIfLiked(currentShow, currentShowDetails, favourites);
+  setUpdateLiked(updateLiked + 1);
   setIsLiked(!currentlyLiked);
   setUpdateFavourites(updateFavourites + 1);
   console.log("Current Show ID: ", currentShowDetails.id);
