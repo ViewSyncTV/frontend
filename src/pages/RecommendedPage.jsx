@@ -50,25 +50,3 @@ function RecommendedPage() {
 }
 
 export default RecommendedPage;
-
-/*
-      return (
-        <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
-          {recommendation.map((item, _) => {
-            console.log("Item: ", item);
-            return (
-              <CustomCard
-                title={item.title}
-                description={item.data.description.substring(0, 150) + "..."}
-                channel={"HBO"}
-                airing_in={"30m"}
-                color="bg-warning"
-              />
-            );
-          })}
-        </div>
-      );
-    }
-    
-    export default RecommendedPage;
-*/    

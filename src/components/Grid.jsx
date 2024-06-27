@@ -286,11 +286,11 @@ function Grid(props) {
   useEffect(() => {
     console.log("Now updating the current show details since it is a movie");
     let title = currentShow.title;
-    let category = currentShow.category; // * TV Show | Movie | Film
-    let cat = category === "TV Show" ? "tv-show" : (category === "Movie" ? "movie" : (category === "Film" ? "movie" : "other"));
+    let category = currentShow.category; // * TV Show | Movie | Film | Kids | Cartoni
+    let cat = category === "TV Show" ? "tv-show" : (category === "Movie" ? "movie" : (category === "Film" ? "movie" : (category === "Kids" ? "tv-show" : (category === "Cartoni" ? "tv-show" : "other"))));
     if (cat === "other") { return; } // Do not load image for other categories
     let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
-    fetch(backendUrl + `/api/program-metadata/${cat}/${title}`)
+    fetch(backendUrl + `/api/program-metadata/${cat}/${title.split('-')[0]}`)
       .then((response) => response.json())
       .then((res) => {
         console.log("Returned Details: ", res);
@@ -451,7 +451,7 @@ function Grid(props) {
                         description: show.description,
                         category: show.category,
                       });
-                      if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film") {
+                      if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film" || show.category === "Kids" || show.category === "Cartoni") {
                         setLoadImage(loadImage + 1);
                       } else { setCurrentShowDetails({}); }
                       console.log("Now setting current show...");
