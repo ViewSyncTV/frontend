@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const LoginButton = () => {
   const login = async () => {
     const domain = import.meta.env.VITE_AUTH0_DOMAIN || "";

@@ -2,6 +2,7 @@ import "./Grid.css";
 import { useEffect, useState } from "react";
 import { HeartIcon as SolidHeartIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as OutlineHeartIcon, BellAlertIcon } from "@heroicons/react/24/outline";
+import { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
 import Rete4 from "../loghi/mediaset-logo/Rete4.svg";
 import Canale5 from "../loghi/mediaset-logo/Canale5.svg";
 import Italia1 from "../loghi/mediaset-logo/Italia1.svg";
@@ -95,9 +96,10 @@ function Grid(props) {
   const [isLiked, setIsLiked] = useState(false);
   const [updateFavourites, setUpdateFavourites] = useState(0);
   const [updateLiked, setUpdateLiked] = useState(0);
-
+  let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+  console.log(backendUrl)
   useEffect(() => {
-    fetch("http://localhost:3010/api/tv-program/favorites", {
+    fetch(backendUrl + "/api/tv-program/favorites", {
       method: "GET",
       credentials: "include"
     })
@@ -118,7 +120,8 @@ function Grid(props) {
     let currentlyLiked = checkIfLiked(currentShow, currentShowDetails, favourites);
     let correctMethod = currentlyLiked ? "DELETE" : "POST";
     console.log("Now execute: ", correctMethod)
-    fetch('http://localhost:3010/api/tv-program/favorite', {
+    let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+    fetch(backendUrl+'/api/tv-program/favorite', {
         method: correctMethod,
         credentials: "include",
         headers: { 'Content-Type': 'application/json' },
@@ -151,7 +154,8 @@ function Grid(props) {
     //console.log("Intervals", intervals);
     setIntervals(intervals);
     /* ******************** POPULATE CHANNELS ******************** */
-    fetch("http://localhost:3010/api/tv-program/week")
+    let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+    fetch(backendUrl + "/api/tv-program/week")
       .then((response) => response.json())
       .then((data) => {
         console.log("Returned Data From Week: ", data);
@@ -285,12 +289,13 @@ function Grid(props) {
     let category = currentShow.category; // * TV Show | Movie | Film
     let cat = category === "TV Show" ? "tv-show" : (category === "Movie" ? "movie" : (category === "Film" ? "movie" : "other"));
     if (cat === "other") { return; } // Do not load image for other categories
-    fetch(`http://localhost:3010/api/program-metadata/${cat}/${title}`)
+    let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+    fetch(backendUrl + `/api/program-metadata/${cat}/${title}`)
       .then((response) => response.json())
       .then((res) => {
         console.log("Returned Details: ", res);
         if (res && res.error) {
-          fetch(`http://localhost:3010/api/program-metadata/tv-show/${title}`)
+          fetch(backendUrl + `/api/program-metadata/tv-show/${title}`)
           .then((response) => response.json())
           .then((res) => {
             console.log("Returned Details: ", res);

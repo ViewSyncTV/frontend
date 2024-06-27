@@ -1,6 +1,7 @@
 const VITE_DEVELOPMENT_MODE=true
-const VITE_DEVELOPMENT_URL='https://localhost:3000'
-const VITE_PRODUCTION_URL=''
-/*const VITE_PRODUCTION_URL='https://tv.duckdns.org:3000' */
+const VITE_DEVELOPMENT_URL='http://localhost:3010'
+const VITE_PRODUCTION_URL='https://viewsynctv-backend.duckdns.org'
+const VITE_DEVELOPMENT_URL_FRONT = 'http://localhost:3000'
+const VITE_PRODUCTION_URL_FRONT = 'https://viewsynctv.duckdns.org'
 
-export { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL };
+export { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL, VITE_DEVELOPMENT_URL_FRONT, VITE_PRODUCTION_URL_FRONT };

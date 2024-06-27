@@ -1,4 +1,4 @@
-import { VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
+import { VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL, VITE_DEVELOPMENT_MODE } from "../constants";
 
 async function fetch_my_assets(
   token,
@@ -17,7 +17,7 @@ async function fetch_my_assets(
   }
   if (loading !== undefined && loading === true) return;
   if (setLoading !== undefined) setLoading(true);
-  let backendurl = import.meta.env.DEV ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+  let backendurl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
   // request with token in header
   return fetch(backendurl + "/get_assets/", {
     method: "POST",

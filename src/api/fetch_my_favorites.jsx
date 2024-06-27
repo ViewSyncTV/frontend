@@ -1,5 +1,8 @@
+import { VITE_DEVELOPMENT_MODE, VITE_PRODUCTION_URL, VITE_DEVELOPMENT_URL } from "../constants";
+
 async function getFavoritesIds() {
-  let favourites = await fetch("http://localhost:3010/api/tv-program/favorites",
+  let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+  let favourites = await fetch(backendUrl + "/api/tv-program/favorites",
     {
     method: "GET",
     credentials: "include"
@@ -23,7 +26,8 @@ async function getFavoritesIds() {
 }
 
 async function getMetadata(movie_or_show, title) {
-  let metadata = await fetch(`http://localhost:3010/api/program-metadata/${movie_or_show}/${title}`, { method: "GET", credentials: "include" })
+  let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+  let metadata = await fetch(`${backendUrl}/api/program-metadata/${movie_or_show}/${title}`, { method: "GET", credentials: "include" })
     .then((response) => response.json())
     .then((data) => {
       console.log("Returned metadata: ", data);

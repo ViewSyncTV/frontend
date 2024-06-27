@@ -3,23 +3,44 @@ import Grid from "../components/Grid";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import CustomCard from "../components/CustomCard";
 import { getFavorites } from "../api/fetch_my_favorites";
-
+import { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
 
 function FavoritesPage() {
   const [favourites, setFavourites] = useState([]);
   useEffect( () => {
       getFavorites(favourites, setFavourites);
-      // console.log("Loaded metadata of favs: ", favourites);
+      console.log("Loaded metadata of favs: ", favourites);
   }, []);
-    
-  /* REMOVE
-  const postData = {
-        movie_id: null, // o null se non presente
-        tvshow_id: 9208 // o l'ID reale se presente
-      };
+  return (
+    <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
+      {favourites.map((item, _) => {
+        console.log("Item: ", item);
+        let urlto_movie = `https://www.themoviedb.org/${item.type === "tv-show" ? "tv" : "movie"}/${item.data.id}`;
+        return (
+          <CustomCard
+            title={item.title}
+            description={item.data.description.substring(0, 150) + "..."}
+            channel={item.data.genres.join(", ")}
+            airing_in={item.data.vote_average.toFixed(2) + "/10"}
+            color="bg-warning"
+            image_path={item.data.poster_path}
+            url={urlto_movie}
+            xmark
+            xmarkHandler={() => handleDelete(item.data.id, item.type, favourites, setFavourites)}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
-  fetch("http://localhost:3010/api/tv-program/favorite",
-  {
+function handleDelete(id, type, favs, setFavs) {
+  console.log("Delete button clicked with data: { id: ", id, ", type: ", type, " })");
+  const postData = { movie_id: null, tvshow_id: null };
+  if (type === "tv-show") { postData.tvshow_id = id; }
+  else { postData.movie_id = id; }
+  let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+  fetch(backendUrl + "/api/tv-program/favorite", {
     method: "DELETE",
     credentials: "include",
     headers: {
@@ -27,28 +48,11 @@ function FavoritesPage() {
     },
     body: JSON.stringify(postData)
   })
-  .then((response) => response.json())
-      .then((data) => {
-        console.log("Returned DELETE favorite: ", data);
-        
-      });
-      */
-  return (
-    <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
-      {favourites.map((item, _) => {
-        console.log("Item: ", item);
-        return (
-          <CustomCard
-            title={item.title}
-            description={item.data.description.substring(0, 150) + "..."}
-            channel={"HBO"}
-            airing_in={"30m"}
-            color="bg-warning"
-          />
-        );
-      })}
-    </div>
-  );
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Returned DELETE favorite: ", data);
+      setFavs(favs.filter((item) => item.data.id !== id));
+    });
 }
 
 export default FavoritesPage;
