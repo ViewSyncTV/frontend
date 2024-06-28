@@ -174,7 +174,7 @@ function App(props) {
                     : { display: "none" }
                 }
               >
-                <FavoritesPage />
+                <FavoritesPage isActive={activeTab === "favorites"} />
             </div>
             <div
                 className={
@@ -187,7 +187,7 @@ function App(props) {
                     : { display: "none" }
                 }
               >
-                <RecommendedPage />
+                <RecommendedPage isActive={activeTab === "recommended"} />
             </div>
             <div
                 className={

@@ -5,17 +5,20 @@ import CustomCard from "../components/CustomCard";
 import { getFavorites } from "../api/fetch_my_favorites";
 import { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
 
-function FavoritesPage() {
+function FavoritesPage(isActive) {
   const [favourites, setFavourites] = useState([]);
-  useEffect( () => {
+  useEffect(() => {
       getFavorites(favourites, setFavourites);
       console.log("Loaded metadata of favs: ", favourites);
   }, []);
+  useEffect(() => { console.log("Reloading favorites..."); getFavorites(favourites, setFavourites); }, [isActive]);
   return (
     <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
       {favourites.map((item, _) => {
         console.log("Item: ", item);
-        let urlto_movie = `https://www.themoviedb.org/${item.type === "tv-show" ? "tv" : "movie"}/${item.data.id}`;
+        let urlto_movie = "";
+        if (item.type && item.data && item.data.id) { urlto_movie = `https://www.themoviedb.org/${item.type === "tv-show" ? "tv" : "movie"}/${item.data.id}`; }
+        item.data.description = item.data.description ? item.data.description : "No description available";
         return (
           <CustomCard
             title={item.title}

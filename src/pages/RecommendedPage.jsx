@@ -5,7 +5,7 @@ import CustomCard from "../components/CustomCard";
 import { getFavorites } from "../api/fetch_my_favorites";
 import { getRecommendedIds } from "../api/fetch_my_recommended";
 
-function RecommendedPage() {
+function RecommendedPage(isActive) {
   const [favs, setFavs] = useState([]);
   const [recs, setRecs] = useState([]);
   useEffect( () => {
@@ -14,6 +14,7 @@ function RecommendedPage() {
     console.log("Favorites: ", favs);
     console.log("Recommended: ", recs);
   }, []);
+  useEffect(() => { console.log("Reloading favorites..."); getFavorites(favs, setFavs); }, [isActive]);
   useEffect(() => {
     console.log("Now getting recommended...");
     console.log("Favorites: ", favs);

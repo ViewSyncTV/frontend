@@ -1,7 +1,7 @@
 import "./Grid.css";
 import { useEffect, useState } from "react";
-import { HeartIcon as SolidHeartIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { HeartIcon as OutlineHeartIcon, BellAlertIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as SolidHeartIcon, BellAlertIcon as SolidBellAlertIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as OutlineHeartIcon, BellAlertIcon as OutlineBellAlertIcon } from "@heroicons/react/24/outline";
 import { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
 import Rete4 from "../loghi/mediaset-logo/Rete4.svg";
 import Canale5 from "../loghi/mediaset-logo/Canale5.svg";
@@ -83,6 +83,7 @@ function Grid(props) {
   const [intervals, setIntervals] = useState([]);
   const [channelsWithShows, setChannelsWithShows] = useState([]);
   const [currentShow, setCurrentShow] = useState({
+    id: undefined,
     title: "",
     start_time: new Date(),
     end_time: new Date(),
@@ -93,9 +94,13 @@ function Grid(props) {
    * Array of { movie_id: number | null, tvshow_id: number | null }
    */
   const [favourites, setFavourites] = useState([]);
+  const [reminders, setReminders] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
+  const [isRemind, setIsRemind] = useState(false);
   const [updateFavourites, setUpdateFavourites] = useState(0);
+  const [updateReminders, setUpdateReminders] = useState(0);
   const [updateLiked, setUpdateLiked] = useState(0);
+  const [updateRemind, setUpdateRemind] = useState(0);
   let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
   console.log(backendUrl)
   useEffect(() => {
@@ -112,14 +117,28 @@ function Grid(props) {
   }, [updateFavourites]);
 
   useEffect(() => {
+    fetch(backendUrl + "/api/tv-program/reminders", {
+      method: "GET",
+      credentials: "include"
+    })
+    .then(response => response.json())
+    .then(res => {
+      console.log("Response Reminders From Server: ", res);
+      if (res && res.data) { setReminders(res.data); }
+    })
+    .catch(error => { console.error("Error:", error); });
+  }, [updateReminders]);
+
+  useEffect(() => {
     console.log("Entered in toggleLiked() method");
     var postData = null;
     console.log("toggleLiked() Category: ", currentShow.category);
-    if(currentShow.category == "TV Show") { postData = { tvshow_id: currentShowDetails.id, title: currentShowDetails.title }; }
+    if(currentShow.category == "TV Show" || currentShow.category == "Kids" || currentShow.category == "Cartoni" ) { postData = { tvshow_id: currentShowDetails.id, title: currentShowDetails.title }; }
     else { postData = { movie_id: currentShowDetails.id, title: currentShowDetails.title }; }
     let currentlyLiked = checkIfLiked(currentShow, currentShowDetails, favourites);
     let correctMethod = currentlyLiked ? "DELETE" : "POST";
     console.log("Now execute: ", correctMethod)
+    console.log("Post Data: ", postData)
     let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
     fetch(backendUrl+'/api/tv-program/favorite', {
         method: correctMethod,
@@ -128,9 +147,36 @@ function Grid(props) {
         body: JSON.stringify(postData)
       })
       .then(response => response.json())
-      .then(res => { console.log("Response from server for toggleLiked() method: ", res); })
+      .then(res => {
+        console.log("Response from server for toggleLiked() method: ", res);
+        if (correctMethod === "DELETE") { setFavourites(favourites.filter((fav) => fav.tvshow_id !== postData.tvshow_id && fav.movie_id !== postData.movie_id)); }
+        else { setFavourites([...favourites, postData]); }
+      })
       .catch(error => { console.error("Error:", error); });
   }, [updateLiked]);
+
+  useEffect(() => {
+    console.log("toggleRemind() Category: ", currentShow.category);
+    let postData = { tvprogram_id: currentShow.id };
+    let currentlyRemind = checkIfRemind(currentShow, currentShowDetails, reminders);
+    let correctMethod = currentlyRemind ? "DELETE" : "POST";
+    console.log("Now execute: ", correctMethod)
+    console.log("Post Data: ", postData)
+    let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
+    fetch(backendUrl+'/api/tv-program/reminder', {
+        method: correctMethod,
+        credentials: "include",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+      })
+      .then(response => response.json())
+      .then(res => {
+        console.log("Response from server for toggleRemind() method: ", res);
+        if (correctMethod === "DELETE") { setReminders(reminders.filter((rem) => rem.tvprogram_id !== postData.tvprogram_id)); }
+        else { setReminders([...reminders, postData]); }
+      })
+      .catch(error => { console.error("Error:", error); });
+  }, [updateRemind]);
 
   useEffect(() => {
     /* ******************** POPULATE INTERVALS ******************** */
@@ -159,6 +205,7 @@ function Grid(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Returned Data From Week: ", data);
+
         /*
           {
             "data": [
@@ -201,13 +248,14 @@ function Grid(props) {
           let showsForChannel = data.data.filter(
             (item) =>
               item.channel_id === channel.channel_id && (
-                new Date(item.end_time).getTime() > nowtime
+                new Date(new Date(item.end_time).getTime() - 2 * 60 * 60 * 1000).getTime() > nowtime
                  &&
-                new Date(item.start_time).getTime() < nowtime + (60 * 60 * 24 * 1000)
+                new Date(new Date(item.start_time).getTime() - 2 * 60 * 60 * 1000).getTime() < nowtime + (60 * 60 * 24 * 1000)
               )
           );
           showsForChannel = showsForChannel.map((item) => {
             return {
+              id: item.id,
               title: item.title,
               start_time: item.start_time,
               end_time: item.end_time,
@@ -217,7 +265,7 @@ function Grid(props) {
           });
           // Order shows by start_time
           showsForChannel.sort((a, b) => {
-            return new Date(a.start_time) - new Date(b.start_time);
+            return new Date(new Date(a.start_time).getTime() - 2 * 60 * 60 * 1000) - new Date(new Date(b.start_time).getTime() - 2 * 60 * 60 * 1000);
           });
           // Check if each show is consecutive to the previous one, if there are holes, fill them with an empty show
           // If any show has the same start_time as the previous one, it should not be included in the filled array as it is a duplicate to be removed
@@ -227,12 +275,13 @@ function Grid(props) {
           let lastStartTime = today.getTime() - 100;
           let lastEndTime = today;
           showsForChannel.forEach((show) => {
-            let start_time = new Date(show.start_time);
-            let end_time = new Date(show.end_time);
+            let start_time = new Date(new Date(show.start_time).getTime() - 2 * 60 * 60 * 1000);
+            let end_time = new Date(new Date(show.end_time).getTime() - 2 * 60 * 60 * 1000);
             if (start_time > lastEndTime) {
               let duration = (start_time - lastEndTime) / 60000; // in minutes
               if (duration > 4) {
                 showsForChannelFilled.push({
+                  id: 0,
                   title: "",
                   start_time: lastEndTime,
                   end_time: start_time,
@@ -252,8 +301,8 @@ function Grid(props) {
           showsForChannel = showsForChannelFilled;
           // Set a duration in minutes for each show
           showsForChannel = showsForChannel.map((show, index) => {
-            let start_time = new Date(show.start_time);
-            let end_time = new Date(show.end_time);
+            let start_time = new Date(new Date(show.start_time).getTime() - 2 * 60 * 60 * 1000);
+            let end_time = new Date(new Date(show.end_time).getTime() - 2 * 60 * 60 * 1000);
             if (start_time.getDate() !== end_time.getDate()) {
               if (props.day.getDate() === start_time.getDate()) {
                 end_time = new Date(start_time.getFullYear(), start_time.getMonth(), start_time.getDate(), 23, 59, 59);
@@ -263,6 +312,7 @@ function Grid(props) {
             }
             let duration = (end_time - start_time) / 60000; // in minutes
             return {
+              id: show.id,
               title: show.title,
               start_time: show.start_time,
               end_time: show.end_time,
@@ -290,7 +340,9 @@ function Grid(props) {
     let cat = category === "TV Show" ? "tv-show" : (category === "Movie" ? "movie" : (category === "Film" ? "movie" : (category === "Kids" ? "tv-show" : (category === "Cartoni" ? "tv-show" : "other"))));
     if (cat === "other") { return; } // Do not load image for other categories
     let backendUrl = VITE_DEVELOPMENT_MODE ? VITE_DEVELOPMENT_URL : VITE_PRODUCTION_URL;
-    fetch(backendUrl + `/api/program-metadata/${cat}/${title.split('-')[0]}`)
+    console.log("Fetching Details for: ", cat, title, " from: ", `${backendUrl}/api/program-metadata/${cat}/${title.split('-')[0].split('%E2%80%93')[0]}`);
+    
+    fetch(`${backendUrl}/api/program-metadata/${cat}/${title.split(/[-–]/)[0].replace(/\d{4}/, '')}`)
       .then((response) => response.json())
       .then((res) => {
         console.log("Returned Details: ", res);
@@ -299,7 +351,7 @@ function Grid(props) {
           .then((response) => response.json())
           .then((res) => {
             console.log("Returned Details: ", res);
-            if (res && res.error) { return; }
+            if (res && res.error) { setCurrentShowDetails(undefined); return; }
             setCurrentShowDetails(res.data);
             checkIfLiked(currentShow, res.data, favourites) ? setIsLiked(true) : setIsLiked(false)
           });
@@ -424,8 +476,8 @@ function Grid(props) {
               />
             </div>
             {channel.shows.map((show, index) => {
-              let starttime = new Date(show.start_time).getTime();
-              let endtime = new Date(show.end_time).getTime();
+              let starttime = new Date(new Date(show.start_time).getTime() - 2 * 60 * 60 * 1000).getTime();
+              let endtime = new Date(new Date(show.end_time).getTime() - 2 * 60 * 60 * 1000).getTime();
               let nowtime = new Date().getTime();
               return (
                 <div className={show.title === "" ? "" : "tooltip tooltip-accent"} data-tip={show.title}>
@@ -444,13 +496,17 @@ function Grid(props) {
                       // ? Query /api/program-metadata/movie/[title separato da trattini minuscolo]
                       if (show.title === "") { return; } // Do not open modal for empty shows
                       console.log("Opening Show: ", show);
-                      setCurrentShow({
+                      console.log("Start Time: ", show.start_time )
+                      let current_show = {
+                        id: show.id,
                         title: show.title,
-                        start_time: new Date(show.start_time),
-                        end_time: new Date(show.end_time),
+                        start_time: new Date(new Date(show.start_time).getTime() - 2 * 60 * 60 * 1000),
+                        end_time: new Date(new Date(show.end_time).getTime() - 2 * 60 * 60 * 1000),
                         description: show.description,
                         category: show.category,
-                      });
+                      };
+                      setCurrentShow(current_show);
+                      checkIfRemind(current_show, {}, reminders) ? setIsRemind(true) : setIsRemind(false);
                       if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film" || show.category === "Kids" || show.category === "Cartoni") {
                         setLoadImage(loadImage + 1);
                       } else { setCurrentShowDetails({}); }
@@ -470,22 +526,23 @@ function Grid(props) {
       </div>
       <dialog id="show_more_modal" className="modal z-50">
         <div className="modal-box bg-base-100 image-full card p-0 max-h-[32rem] max-w-[35rem]">
-          <figure><img src={currentShowDetails.poster_path} className="w-[36rem] h-[32rem] object-none" /></figure>
+          {currentShowDetails && currentShowDetails.poster_path ? <figure><img src={currentShowDetails.poster_path} className="w-[36rem] h-[32rem] object-none" /></figure> : <></>}
           <div className="card-body">
             <div className="card-actions">
-              {currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" ? (
+              {currentShowDetails && (currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" || currentShow.category === "Kids" || currentShow.category === "Cartoni") ? (
                 <>
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2">
-                    <BellAlertIcon width="1rem"/>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2" onClick={() => handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
+                    {isRemind ? <SolidBellAlertIcon width="1rem"/> : <OutlineBellAlertIcon width="1rem"/>}
                   </button>
+                  
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites, setUpdateLiked, updateLiked)}>
-                    {isLiked ? <SolidHeartIcon width="1rem" /> : <OutlineHeartIcon width="1rem" /> }
+                    {isLiked ? <SolidHeartIcon width="1rem" /> : <OutlineHeartIcon width="1rem" />}
                   </button>
                 </>
               ) : (
                 <>
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2">
-                    <BellAlertIcon width="1rem" />
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
+                    {isRemind ? <SolidBellAlertIcon width="1rem" /> : <OutlineBellAlertIcon width="1rem"/>}
                   </button>
                 </>
               )}
@@ -505,7 +562,7 @@ function Grid(props) {
                 <input type="radio" name="rating-3" className="mask mask-heart w-4 bg-green-400" />
               </div>
             </div>
-            {currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" ? (
+            {currentShowDetails && (currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" || currentShow.category === "Kids" || currentShow.category === "Cartoni") ? (
               <>
                 <div className="space-x-2">
                   {currentShowDetails && currentShowDetails.genres && currentShowDetails.genres.map((genre, index) => (
@@ -543,6 +600,17 @@ function checkIfLiked(currentShow, currentShowDetails, favourites) {
   return currentlyLiked;
 }
 
+function checkIfRemind(currentShow, currentShowDetails, reminders) {
+  console.log("Current Show : ", currentShow);
+  console.log("Reminders : ", reminders);
+  let currentlyRemind = false;
+  reminders.forEach((rem) => {
+    console.log("Current Show id:", currentShow.id, "Reminder checking now: ", rem.tvprogram_id);
+    if (rem.tvprogram_id === currentShow.id) { currentlyRemind = true; }
+  });
+  return currentlyRemind;
+}
+
 function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites, updateFavourites, setUpdateFavourites, setUpdateLiked, updateLiked) {
   console.log("Entered in handleLikeClick() method");
   console.log("Favourites: ", favourites);
@@ -551,6 +619,16 @@ function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites
   setIsLiked(!currentlyLiked);
   setUpdateFavourites(updateFavourites + 1);
   console.log("Current Show ID: ", currentShowDetails.id);
+}
+
+function handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind) {
+  console.log("Entered in handleRemindClick() method");
+  console.log("Reminders: ", reminders);
+  let currentlyRemind = checkIfRemind(currentShow, {}, reminders);
+  setUpdateRemind(updateRemind + 1);
+  setIsRemind(!currentlyRemind);
+  setUpdateReminders(updateReminders + 1);
+  console.log("Current Show ID: ", currentShow.id);
 }
 
 export default Grid;
