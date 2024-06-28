@@ -80,6 +80,12 @@ function getCustomStyle(duration) {
 }
 
 function Grid(props) {
+  const [onNowPos, setOnNowPos] = useState(0);
+  useEffect(() => {
+    if (document && document.getElementById("guide")) {
+      document.getElementById("guide").scrollTo(((onNowPos * (30 * 1000)) / 120) + (2 * onNowPos), 0);
+    }
+  }, [onNowPos]);
   const [intervals, setIntervals] = useState([]);
   const [channelsWithShows, setChannelsWithShows] = useState([]);
   const [currentShow, setCurrentShow] = useState({
@@ -188,9 +194,9 @@ function Grid(props) {
     let intervals = [];
     for (let i = 0; i < 24; i++) {
       // Alle 14:55 sarà 14:00, 14:30, 15:00, ...
-      if (currentHour === i && currentMinute < 30 && currentDay == props.day.getDay() ) { intervals.push("On Now"); }
+      if (currentHour === i && currentMinute < 30 && currentDay == props.day.getDay() ) { setOnNowPos(intervals.length); intervals.push("On Now"); }
       else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:00`); }
-      if (currentHour === i && currentMinute >= 30 && currentDay == props.day.getDay()) { intervals.push("On Now"); }
+      if (currentHour === i && currentMinute >= 30 && currentDay == props.day.getDay()) { setOnNowPos(intervals.length); intervals.push("On Now"); }
       else { intervals.push(`${i % 24 < 10 ? "0" + (i % 24) : i % 24}:30`); }
     }
     // intervals.shift(); // Rimuovi 14:00 tenendo da 14:30 in poi (c'è anche l'on now prima)

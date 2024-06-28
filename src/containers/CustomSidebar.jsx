@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import {
   CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
+  AtSymbolIcon,
 } from "@heroicons/react/24/outline";
 
 import ViewSyncTVLogo from "./logo.svg";
@@ -121,35 +120,9 @@ function CustomSidebar(props) {
             })
           }
           <div className="absolute bottom-0 p-4">
-            {props.isDevelopment ? (
-              <div className="alert alert-warning shadow-lg mb-3 justify-normal">
-                <ExclamationTriangleIcon className="w-6" />
-                <span className="whitespace-pre"> Dev Environment</span>
-              </div>
-            ) : (
-              <></>
-            )}
-            {props.loading ? (
-              <>
-                <div className="alert alert-info shadow-lg mb-1 justify-normal">
-                  <InformationCircleIcon className="w-6" />
-                  <span>Loading in Progress</span>
-                </div>
-                <progress className="progress progress-info text-secondary h-1"></progress>
-              </>
-            ) : (
-              <>
-                <div className="alert alert-success shadow-lg mb-1 justify-normal">
-                  <CheckCircleIcon className="w-6" />
-                  <span className="whitespace-pre">Loading Complete </span>
-                </div>
-                <progress
-                  className="progress progress-success text-secondary h-1"
-                  value="100"
-                  max="100"
-                ></progress>
-              </>
-            )}
+            <div className="alert alert-info shadow-lg mb-1 justify-normal">
+              <span className="whitespace-pre pl-8 pr-6">ViewSyncTV™</span>
+            </div>
           </div>
         </ul>
       </div>
