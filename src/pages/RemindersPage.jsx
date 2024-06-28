@@ -25,7 +25,7 @@ function RemindersPage(isActive) {
             title={item.title}
             description={item.description.substring(0, 150) + "..."}
             channel={item.channel}
-            airing_in={calculateTimeDifference(item.start_time, item.endTime)}
+            airing_in={calculateTimeDifference(item.start_time, item.end_time)}
             color="bg-warning"
             xmark
             xmarkHandler={() => handleDelete(item.id, reminders, setReminders)}
@@ -37,7 +37,7 @@ function RemindersPage(isActive) {
           const start = new Date(new Date(startTime).getTime() - 2 * 60 * 60 * 1000);
           const end = new Date(new Date(endTime).getTime() - 2 * 60 * 60 * 1000);
           const difference = start.getTime() - currentTime.getTime();
-          const difference_end = currentTime.getTime() - end.getTime();
+          const difference_end = end.getTime() - currentTime.getTime();
           const minutes = Math.floor(difference / 1000 / 60);
           const hours = Math.floor(minutes / 60);
           const days = Math.floor(hours / 24);
