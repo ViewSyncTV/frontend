@@ -5,12 +5,16 @@ import CustomCard from "../components/CustomCard";
 import { getReminders } from "../api/fetch_my_reminders";
 import { VITE_DEVELOPMENT_MODE, VITE_DEVELOPMENT_URL, VITE_PRODUCTION_URL } from "../constants";
 
-function RemindersPage() {
+function RemindersPage(isActive) {
   const [reminders, setReminders] = useState([]);
   useEffect( () => {
       getReminders(reminders, setReminders);
       console.log("Loaded metadata of reminders: ", reminders);
   }, []);
+  useEffect( () => {
+    console.log("Now reloading reminders...");
+    getReminders(reminders, setReminders);
+  }, [isActive])
   return (
     <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 gap-8">
       {reminders.map((item, _) => {
@@ -39,11 +43,11 @@ function RemindersPage() {
           const days = Math.floor(hours / 24);
 
           if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''} to`;
+            return `in ${days} day${days > 1 ? 's' : ''}`;
           } else if (hours > 0) {
-            return `${hours} hour${hours > 1 ? 's' : ''} to`;
+            return `in ${hours} hour${hours > 1 ? 's' : ''}`;
           } else if (minutes > 0) {
-            return `${minutes} minute${minutes > 1 ? 's' : ''} to`;
+            return `in ${minutes} minute${minutes > 1 ? 's' : ''}`;
           } else if (difference_end > 0){
             return "Just now";
           }else{

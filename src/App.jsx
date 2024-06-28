@@ -5,12 +5,14 @@ import FavoritesPage from "./pages/FavoritesPage";
 import RecommendedPage from "./pages/RecommendedPage";
 import RemindersPage from "./pages/RemindersPage";
 import Callback from "./Callback";
+import { VITE_DEVELOPMENT_MODE } from "./constants";
 
 import "./App.css";
 import AssetType from "./types/AssetType";
 import usePersistantState from "./components/usePersistantState";
 import Grid from "./components/Grid";
 const Layout = lazy(() => import("./containers/Layout"));
+if (!VITE_DEVELOPMENT_MODE) { console.log = () => {}; }
 
 function App(props) {
   const [theme, setTheme] = usePersistantState("THEME_MODE", "dim"); // Defaults to dark theme
@@ -200,7 +202,7 @@ function App(props) {
                     : { display: "none" }
                 }
               >
-                <RemindersPage />
+                <RemindersPage isActive={activeTab === "popular"} />
             </div>
           </div>
           </div>
