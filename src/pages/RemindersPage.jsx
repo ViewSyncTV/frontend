@@ -30,8 +30,8 @@ function RemindersPage() {
 
         function calculateTimeDifference(startTime, endTime) {
           const currentTime = new Date();
-          const start = new Date(startTime);
-          const end = new Date(endTime);
+          const start = new Date(new Date(startTime).getTime() - 2 * 60 * 60 * 1000).getTime();
+          const end = new Date(new Date(endTime).getTime() - 2 * 60 * 60 * 1000).getTime();
           const difference = start.getTime() - currentTime.getTime();
           const difference_end = currentTime.getTime() - end.getTime()
           const minutes = Math.floor(difference / 1000 / 60);
@@ -39,11 +39,11 @@ function RemindersPage() {
           const days = Math.floor(hours / 24);
 
           if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''} ago`;
+            return `${days} day${days > 1 ? 's' : ''} to`;
           } else if (hours > 0) {
-            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            return `${hours} hour${hours > 1 ? 's' : ''} to`;
           } else if (minutes > 0) {
-            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            return `${minutes} minute${minutes > 1 ? 's' : ''} to`;
           } else if (difference_end > 0){
             return "Just now";
           }else{
