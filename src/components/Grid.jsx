@@ -158,7 +158,7 @@ function Grid(props) {
   useEffect(() => {
     console.log("toggleRemind() Category: ", currentShow.category);
     let postData = { tvprogram_id: currentShow.id };
-    let currentlyRemind = checkIfRemind(currentShow, currentShowDetails, reminders);
+    let currentlyRemind = checkIfRemind(currentShow, reminders);
     let correctMethod = currentlyRemind ? "DELETE" : "POST";
     console.log("Now execute: ", correctMethod)
     console.log("Post Data: ", postData)
@@ -506,7 +506,7 @@ function Grid(props) {
                         category: show.category,
                       };
                       setCurrentShow(current_show);
-                      checkIfRemind(current_show, {}, reminders) ? setIsRemind(true) : setIsRemind(false);
+                      checkIfRemind(current_show, reminders) ? setIsRemind(true) : setIsRemind(false);
                       if (show.category === "TV Show" || show.category === "Movie" || show.category === "Film" || show.category === "Kids" || show.category === "Cartoni") {
                         setLoadImage(loadImage + 1);
                       } else { setCurrentShowDetails({}); }
@@ -531,7 +531,7 @@ function Grid(props) {
             <div className="card-actions">
               {currentShowDetails && (currentShow.category === "TV Show" || currentShow.category === "Movie" || currentShow.category === "Film" || currentShow.category === "Kids" || currentShow.category === "Cartoni") ? (
                 <>
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2" onClick={() => handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[5rem] top-2" onClick={() => handleRemindClick(currentShow, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
                     {isRemind ? <SolidBellAlertIcon width="1rem"/> : <OutlineBellAlertIcon width="1rem"/>}
                   </button>
                   
@@ -541,7 +541,7 @@ function Grid(props) {
                 </>
               ) : (
                 <>
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-[3rem] top-2" onClick={() => handleRemindClick(currentShow, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind)}>
                     {isRemind ? <SolidBellAlertIcon width="1rem" /> : <OutlineBellAlertIcon width="1rem"/>}
                   </button>
                 </>
@@ -600,7 +600,7 @@ function checkIfLiked(currentShow, currentShowDetails, favourites) {
   return currentlyLiked;
 }
 
-function checkIfRemind(currentShow, currentShowDetails, reminders) {
+function checkIfRemind(currentShow, reminders) {
   console.log("Current Show : ", currentShow);
   console.log("Reminders : ", reminders);
   let currentlyRemind = false;
@@ -621,10 +621,10 @@ function handleLikeClick(currentShow, currentShowDetails, setIsLiked, favourites
   console.log("Current Show ID: ", currentShowDetails.id);
 }
 
-function handleRemindClick(currentShow, currentShowDetails, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind) {
+function handleRemindClick(currentShow, setIsRemind, reminders, updateReminders, setUpdateReminders, setUpdateRemind, updateRemind) {
   console.log("Entered in handleRemindClick() method");
   console.log("Reminders: ", reminders);
-  let currentlyRemind = checkIfRemind(currentShow, {}, reminders);
+  let currentlyRemind = checkIfRemind(currentShow, reminders);
   setUpdateRemind(updateRemind + 1);
   setIsRemind(!currentlyRemind);
   setUpdateReminders(updateReminders + 1);
