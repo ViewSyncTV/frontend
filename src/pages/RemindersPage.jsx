@@ -30,10 +30,10 @@ function RemindersPage() {
 
         function calculateTimeDifference(startTime, endTime) {
           const currentTime = new Date();
-          const start = new Date(new Date(startTime).getTime() - 2 * 60 * 60 * 1000).getTime();
-          const end = new Date(new Date(endTime).getTime() - 2 * 60 * 60 * 1000).getTime();
+          const start = new Date(new Date(startTime).getTime() - 2 * 60 * 60 * 1000);
+          const end = new Date(new Date(endTime).getTime() - 2 * 60 * 60 * 1000);
           const difference = start.getTime() - currentTime.getTime();
-          const difference_end = currentTime.getTime() - end.getTime()
+          const difference_end = currentTime.getTime() - end.getTime();
           const minutes = Math.floor(difference / 1000 / 60);
           const hours = Math.floor(minutes / 60);
           const days = Math.floor(hours / 24);

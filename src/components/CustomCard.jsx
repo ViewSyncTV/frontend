@@ -4,7 +4,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 
 function CustomCard({ title, description, channel, airing_in, color = "bg-warning", image_path, xmark, xmarkHandler, url }) {
   return (
-    <div onClick={() => { window.open(url, '_blank').focus(); }} className="hover:opacity-85">
+    <div onClick={() => { if (url) { window.open(url, '_blank').focus(); } }} className="hover:opacity-85">
       <div className={`card aspect-square min-h-72 ${image_path ? "image-full p-0" : ""} text-primary-content ${color}`}>
         {image_path ? <figure><img src={image_path} className="w-[54rem] h-[32rem] object-cover" /></figure> : <></>}
         <div className="card-body">
